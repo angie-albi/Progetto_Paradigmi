@@ -11,10 +11,12 @@ public class Articolo{
 	private double prezzo;
 	private String nota;
 	
+	public static final String CATEGORIA_DEFAULT = "Non categorizzato";
+	
 	
 	// COSTRUTTORI
 	public Articolo(String nome, String categoria, double prezzo, String nota)throws ArticoloException, GestioneListeException {
-	    this.setNome(nome);
+	    this.nome = nome;	//valore univoco
 		this.setCategoria(categoria);
 		this.setPrezzo(prezzo);
 		this.setNota(nota);
@@ -35,13 +37,6 @@ public class Articolo{
 
 	// GETTERS e SETTERS
 	// Nome
-	public void setNome(String nome) throws ArticoloException {
-		if (nome == null || nome.trim().isEmpty()) {
-	        throw new ArticoloException("Il nome dell'articolo non può essere vuoto");
-	    }
-		this.nome=nome;
-	}
-	
 	public String getNome() {
 		return nome;
 	}
@@ -52,12 +47,7 @@ public class Articolo{
 
 	public void setCategoria(String categoria) throws GestioneListeException {
 		if(categoria==null || categoria.isEmpty()) {
-			categoria = "Non categorizzato";
-		}
-		
-		// se non esiste la categoria la inserisco
-		if(!GestioneListe.esisteCategoria(categoria)){
-			GestioneListe.inserisciCategoria(categoria);
+			categoria = CATEGORIA_DEFAULT;
 		}
 		
 		this.categoria = categoria;

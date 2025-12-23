@@ -23,8 +23,10 @@ class GestioneListeTest {
 	}
 
 	@Test
-	void testInserisciLista() throws GestioneListeException {
-		assertTrue(GestioneListe.inserisciLista(l1));
+	void testInserisciLista() {
+		assertDoesNotThrow(() -> {
+			GestioneListe.inserisciLista(l1);
+		});
 		
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.inserisciLista(new ListaDiArticoli("Spesa"));
@@ -57,7 +59,9 @@ class GestioneListeTest {
 	void testCancellaLista() throws GestioneListeException {
 		GestioneListe.inserisciLista(l1);
 		
-		assertTrue(GestioneListe.cancellaLista("Spesa"));
+		assertDoesNotThrow(() -> {
+			GestioneListe.cancellaLista("Spesa");
+		});
 		
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.matchLista("Spesa");
@@ -76,8 +80,11 @@ class GestioneListeTest {
 	}
 
 	@Test
-	void testInserisciCategoria() throws GestioneListeException {
-		GestioneListe.inserisciCategoria("Elettronica");
+	void testInserisciCategoria() {
+		assertDoesNotThrow(() -> {
+			GestioneListe.inserisciCategoria("Elettronica");
+		});
+		
 		assertTrue(GestioneListe.esisteCategoria("Elettronica"));
 		
 		assertThrows(GestioneListeException.class, () -> {
@@ -96,14 +103,16 @@ class GestioneListeTest {
 	void testCancellaCategoria() throws GestioneListeException {
 		GestioneListe.inserisciCategoria("Bricolage");
 		
-		assertTrue(GestioneListe.cancellaCategoria("Bricolage"));
+		assertDoesNotThrow(() -> {
+			GestioneListe.cancellaCategoria("Bricolage");
+		});
 		
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.cancellaCategoria("Bricolage");
 		});
 		
 		assertThrows(GestioneListeException.class, () -> {
-			GestioneListe.cancellaCategoria("Non categorizzato");
+			GestioneListe.cancellaCategoria(GestioneListe.CATEGORIA_DEFAULT);
 		});
 		
 		assertThrows(GestioneListeException.class, () -> {
@@ -115,11 +124,17 @@ class GestioneListeTest {
 	}
 
 	@Test
-	void testInserisciArticolo() throws GestioneListeException {
-		assertTrue(GestioneListe.inserisciArticolo(a1));
+	void testInserisciArticolo() {
+		assertDoesNotThrow(() -> {
+			GestioneListe.inserisciArticolo(a1);
+		});
 		
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.inserisciArticolo(a1);
+		});
+		
+		assertThrows(GestioneListeException.class, () -> {
+			GestioneListe.inserisciArticolo(null);
 		});
 	}
 
@@ -127,7 +142,9 @@ class GestioneListeTest {
 	void testCancellaArticolo() throws GestioneListeException {
 		GestioneListe.inserisciArticolo(a1);
 		
-		assertTrue(GestioneListe.cancellaArticolo(a1));
+		assertDoesNotThrow(() -> {
+			GestioneListe.cancellaArticolo(a1);
+		});
 		
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.cancellaArticolo(a1);

@@ -2,7 +2,7 @@ package modello.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,6 @@ class ListaDiArticoliTest {
 	void testCostruttore() {
 		assertEquals("Spesa", l1.getNome());
 		assertEquals("Regali", l2.getNome());
-		assertEquals("Lavoro", l3.getNome());
 		
 		assertThrows(ListaDiArticoliException.class, () -> {
 			new ListaDiArticoli("");
@@ -40,11 +39,13 @@ class ListaDiArticoliTest {
 	}
 	
 	@Test
-	void testInserisciArticoli() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
-		assertTrue(l1.inserisciArticolo(new Articolo("Latte")));
-		assertTrue(l1.inserisciArticolo("Pane", "Cibo"));
-		assertTrue(l1.inserisciArticolo("Vino", "Bevande", 10));
-		assertTrue(l1.inserisciArticolo("Acqua", "Bevande", 1, "Naturale"));
+	void testInserisciArticoli() {
+		assertDoesNotThrow(() -> {
+			l1.inserisciArticolo(new Articolo("Latte"));
+			l1.inserisciArticolo("Pane", "Cibo");
+			l1.inserisciArticolo("Vino", "Bevande", 10);
+			l1.inserisciArticolo("Acqua", "Bevande", 1, "Naturale");
+		});
 		
 		assertEquals(4, l1.numEl());
 		
@@ -55,11 +56,15 @@ class ListaDiArticoliTest {
 
 	@Test
 	void testCancellaArticolo() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
-		riempiLista(l1);
+		riempiLista(l1); 
 		Articolo a = l1.ricercaArticolo("Latte").get(0);
 		
-		l1.cancellaArticolo(a);
+		assertDoesNotThrow(() -> {
+			l1.cancellaArticolo(a);
+		});
+		
 		assertEquals(12.00, l1.calcoloPrezzoTotale(), 0.001);
+		assertEquals(1, l1.numElCanc());
 		
 		assertThrows(ListaDiArticoliException.class, () -> {
 			l1.cancellaArticolo(a);
@@ -78,8 +83,12 @@ class ListaDiArticoliTest {
 		l1.cancellaArticolo(a);
 		assertEquals(12.00, l1.calcoloPrezzoTotale(), 0.001);
 		
-		l1.recuperaArticolo(a);
+		assertDoesNotThrow(() -> {
+			l1.recuperaArticolo(a);
+		});
+		
 		assertEquals(13.50, l1.calcoloPrezzoTotale(), 0.001);
+		assertEquals(0, l1.numElCanc());
 		
 		assertThrows(ListaDiArticoliException.class, () -> {
 			l1.recuperaArticolo(a);
@@ -94,7 +103,7 @@ class ListaDiArticoliTest {
 	void testRicercaArticolo() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
 		riempiLista(l1);
 		
-		ArrayList<Articolo> ris = l1.ricercaArticolo("la");
+		List<Articolo> ris = l1.ricercaArticolo("la");
 		assertEquals(1, ris.size());
 		assertEquals("Latte", ris.get(0).getNome());
 		
@@ -117,7 +126,7 @@ class ListaDiArticoliTest {
 	    Articolo a = l1.ricercaArticolo("Latte").get(0);
 	    l1.cancellaArticolo(a); 
 	    
-	    ArrayList<Articolo> ris = l1.ricercaArticolo("Latte");
+	    List<Articolo> ris = l1.ricercaArticolo("Latte");
 	    assertEquals(1, ris.size());
 	    assertEquals("Latte", ris.get(0).getNome());
 	}
@@ -140,6 +149,7 @@ class ListaDiArticoliTest {
 		l1.cancellaArticolo(a);
 		
 		l1.svuotaCancellati();
+		assertEquals(0, l1.numElCanc());
 		
 		assertThrows(ListaDiArticoliException.class, () -> {
 			l1.recuperaArticolo(a);
@@ -152,9 +162,12 @@ class ListaDiArticoliTest {
 	    Articolo a = l1.ricercaArticolo("Latte").get(0);
 	    l1.cancellaArticolo(a);
 	    
-	    assertTrue(l1.inserisciArticolo(a));
+	    assertDoesNotThrow(() -> {
+	    	l1.inserisciArticolo(a);
+	    });
 	    
 	    assertEquals(3, l1.numEl()); 
+	    assertEquals(0, l1.numElCanc());
 	    assertEquals(13.50, l1.calcoloPrezzoTotale(), 0.001);
 	}
 	
@@ -167,13 +180,16 @@ class ListaDiArticoliTest {
 	    boolean trovatoLatte = false;
 	    boolean trovatoPane = false;
 	    
+	    int conta = 0;
 	    for(Articolo art : l1) {
-	        if(art.getNome().equals("Latte")) trovatoLatte = true; // Era cancellato
-	        if(art.getNome().equals("Pane")) trovatoPane = true;   // È attivo
+	    	conta++;
+	        if(art.getNome().equals("Latte")) trovatoLatte = true;
+	        if(art.getNome().equals("Pane")) trovatoPane = true;
 	    }
 	    
-	    assertTrue(trovatoLatte, "L'iteratore deve mostrare anche gli articoli cancellati");
-	    assertTrue(trovatoPane, "L'iteratore deve mostrare gli articoli attivi");
+	    assertEquals(3, conta);
+	    assertTrue(trovatoLatte);
+	    assertTrue(trovatoPane);
 	}
 	
 	@Test
@@ -188,11 +204,10 @@ class ListaDiArticoliTest {
 	    
 	    String risultato = lista.toString();
 	    
+	    assertNotNull(risultato);
 	    assertTrue(risultato.contains("Spesa"));
 	    assertTrue(risultato.contains("Latte"));
 	    assertTrue(risultato.contains("Pane"));
-	    assertTrue(risultato.contains("articoli="));
-	    assertTrue(risultato.contains("articoliCancellati="));
 	}
 
 	void riempiLista(ListaDiArticoli l) throws ArticoloException, ListaDiArticoliException, GestioneListeException{

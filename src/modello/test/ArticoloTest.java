@@ -42,7 +42,7 @@ class ArticoloTest {
 		
 		a4 = new Articolo("Mela");
 		assertEquals("Mela", a4.getNome());
-		assertEquals("Non categorizzato", a4.getCategoria());
+		assertEquals(Articolo.CATEGORIA_DEFAULT, a4.getCategoria());
 		assertEquals(0.00 , a4.getPrezzo(), 0.001);
 		assertEquals("", a4.getNota());
 	}
@@ -66,9 +66,6 @@ class ArticoloTest {
 
 	@Test
 	public void testSetters() throws ArticoloException, GestioneListeException {
-        a1.setNome("Latte Scremato");
-        assertEquals("Latte Scremato", a1.getNome());
-
 		a1.setCategoria("Cibo");
 		assertEquals("Cibo", a1.getCategoria());
 		
@@ -90,17 +87,13 @@ class ArticoloTest {
 	@Test
 	public void testSettersValoriDiDefault() throws ArticoloException, GestioneListeException {
 	    a1.setCategoria(null);
-	    assertEquals("Non categorizzato", a1.getCategoria());
+	    assertEquals(Articolo.CATEGORIA_DEFAULT, a1.getCategoria());
 
 	    a1.setCategoria("");
-	    assertEquals("Non categorizzato", a1.getCategoria());
+	    assertEquals(Articolo.CATEGORIA_DEFAULT, a1.getCategoria());
 
 	    a1.setNota(null);
 	    assertEquals("", a1.getNota());
-	    
-	    assertThrows(ArticoloException.class, () -> {
-	        a1.setNome("");
-	    });
 	}
 	
 	@Test

@@ -84,7 +84,7 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 	}
 	
 	// Inserisci Articolo
-	public boolean inserisciArticolo(Articolo a) throws ListaDiArticoliException {
+	public void inserisciArticolo(Articolo a) throws ListaDiArticoliException {
 		if(articoli.contains(a))
 			throw new ListaDiArticoliException("Annuncio già presente");
 		
@@ -92,28 +92,28 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 			articoliCancellati.remove(a);
 		}
 		
-		return articoli.add(a);
+		articoli.add(a);
 	}
 	
-	public boolean inserisciArticolo(String nome) throws ListaDiArticoliException, ArticoloException, GestioneListeException {
-		return inserisciArticolo(new Articolo(nome));
+	public void inserisciArticolo(String nome) throws ListaDiArticoliException, ArticoloException, GestioneListeException {
+		inserisciArticolo(new Articolo(nome));
 	}
 	
-	public boolean inserisciArticolo(String nome, String categoria) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
-		return inserisciArticolo(new Articolo(nome, categoria));
+	public void inserisciArticolo(String nome, String categoria) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+		inserisciArticolo(new Articolo(nome, categoria));
 	}
 	
-	public boolean inserisciArticolo(String nome, String categoria, double prezzo) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
-		return inserisciArticolo(new Articolo(nome, categoria, prezzo));
+	public void inserisciArticolo(String nome, String categoria, double prezzo) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+		inserisciArticolo(new Articolo(nome, categoria, prezzo));
 	}
 	
-	public boolean inserisciArticolo(String nome, String categoria, double prezzo, String nota) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
-		return inserisciArticolo(new Articolo(nome, categoria, prezzo, nota));
+	public void inserisciArticolo(String nome, String categoria, double prezzo, String nota) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+		inserisciArticolo(new Articolo(nome, categoria, prezzo, nota));
 	}
 	
 	// Ricerca Articolo: sia nella lista che nei cancellati
-	public ArrayList<Articolo> ricercaArticolo(String prefisso){
-		ArrayList<Articolo> ris = new ArrayList<Articolo>();
+	public List<Articolo> ricercaArticolo(String prefisso){
+		List<Articolo> ris = new ArrayList<Articolo>();
 		
 		if(prefisso == null)
 			return ris;
@@ -145,7 +145,7 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		
 		if(articoliCancellati.contains(a)) {
 			articoliCancellati.remove(a);
-			this.inserisciArticolo(a); // sono rpesenti i controlli necessari
+			this.inserisciArticolo(a); // sono presenti i controlli necessari
 		}
 		else {
 			throw new ListaDiArticoliException("Articolo non presente nei cancellati, è impossibile recuperarlo");
