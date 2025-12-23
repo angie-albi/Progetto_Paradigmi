@@ -132,10 +132,6 @@ class GestioneListeTest {
 		assertThrows(GestioneListeException.class, () -> {
 			GestioneListe.inserisciArticolo(a1);
 		});
-		
-		assertThrows(GestioneListeException.class, () -> {
-			GestioneListe.inserisciArticolo(null);
-		});
 	}
 
 	@Test

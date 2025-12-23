@@ -15,8 +15,11 @@ public class Articolo{
 	
 	
 	// COSTRUTTORI
-	public Articolo(String nome, String categoria, double prezzo, String nota)throws ArticoloException, GestioneListeException {
-	    this.nome = nome;	//valore univoco
+	public Articolo(String nome, String categoria, double prezzo, String nota) throws ArticoloException, GestioneListeException {
+	    if(nome == null || nome.trim().isEmpty())
+	    		throw new ArticoloException("Il nome non può essere vuoto");
+	    
+		this.nome = nome;	//valore univoco
 		this.setCategoria(categoria);
 		this.setPrezzo(prezzo);
 		this.setNota(nota);
@@ -46,7 +49,7 @@ public class Articolo{
 	}
 
 	public void setCategoria(String categoria) throws GestioneListeException {
-		if(categoria==null || categoria.isEmpty()) {
+		if(categoria==null || categoria.trim().isEmpty()) {
 			categoria = CATEGORIA_DEFAULT;
 		}
 		

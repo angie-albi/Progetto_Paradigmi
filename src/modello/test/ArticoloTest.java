@@ -59,6 +59,7 @@ class ArticoloTest {
         assertThrows(ArticoloException.class, () -> {
             new Articolo("", "Categoria", 10, "Nota");
         });
+        
         assertThrows(ArticoloException.class, () -> {
             new Articolo(null, "Categoria", 10, "Nota");
         });
