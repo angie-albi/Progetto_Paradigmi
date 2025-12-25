@@ -7,28 +7,56 @@ import java.util.NoSuchElementException;
 
 
 import modello.exception.ArticoloException;
-import modello.exception.GestioneListeException;
 import modello.exception.ListaDiArticoliException;
 
 /**
- * Gestisce una collezione di articoli organizzata in una lista attiva e una dei cancellati
- * * @author Il Tuo Nome
+ * La classe {@code ListaDiArticoli} gestisce una collezione di prodotti organizzata in due elenchi:
+ * <ul>
+ *   <li>Articoli attivi: i prodotti attualmente presenti nella lista della spesa</li>
+ *   <li>Articoli cancellati: lo storico dei prodotti rimossi che possono essere recuperati</li>
+ * </ul>
+ * 
+ * <p>La classe implementa {@code Iterable} per permettere di scorrere sequenzialmente 
+ * tutti i prodotti (sia attivi che cancellati) con un unico ciclo.
+ * 
+ * @author Angie Albitres
  */
 public class ListaDiArticoli implements Iterable<Articolo>{
 	
-	// VARIABILI
+	/**
+	 * Nome identificativo della lista
+	 */
 	private String nome;
+	/**
+	 * Elenco dei prodotti attualmente da acquistare
+	 */
 	private List<Articolo> articoli;
+	/**
+	 * Elenco dei prodotti rimossi dalla lista ma ancora ripristinabili
+	 */
 	private List<Articolo> articoliCancellati;
 	
-	// ITERATORE
+	/**
+	 * Restituisce un iteratore che attraversa prima gli articoli attivi e poi quelli cancellati
+	 * 
+	 * @return Un'istanza di {@code IteratoreArticoli}
+	 */
 	@Override
 	public Iterator<Articolo> iterator() {
 		return new IteratoreArticoli();
 	}
 	
+	/**
+	 * Classe interna (privata) che implementa la logica di iterazione su due liste distinte
+	 */
 	private class IteratoreArticoli implements Iterator<Articolo>{
+		/**
+		 * Iteratore per la lista degli articoli attivi
+		 */
 		private final Iterator<Articolo> it1 = articoli.iterator();
+		/**
+		 * Iteratore per la lista degli articoli cancellati
+		 */
         private final Iterator<Articolo> it2 = articoliCancellati.iterator();
         
 		@Override
@@ -49,13 +77,14 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 	}
 	
 	/**
-	 * Crea una nuova lista articoli inizializzando le strutture dati interne
-	 * * @param nome Il nome identificativo della lista
-	 * @throws ListaDiArticoliException Lanciata se il nome della lista è vuoto o nullo
+	 * Crea una nuova lista articoli inizializzando i contenitori per i prodotti
+	 * 
+	 * @param nome Il nome della lista
+	 * 
+	 * @throws ListaDiArticoliException Viene lanciata se il nome della lista è nullo o vuoto
 	 */
-	// COSTRUTTORE
 	public ListaDiArticoli(String nome) throws ListaDiArticoliException {
-		if (nome == null || nome.trim().isEmpty()) {
+		if (nome == null || nome.isBlank()) {
             throw new ListaDiArticoliException("Il nome della lista non può essere vuoto");
         }
 		
@@ -64,30 +93,43 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		this.articoliCancellati = new ArrayList<Articolo>();
 	}
 	
-	// METODI
-	// Getter di Nome
+	/**
+	 * Restituisce il nome della lista
+	 * 
+	 * @return Il nome della lista
+	 */
 	public String getNome() {
 		return nome;
 	}
 	
-	// Numero elementi nella lista
+	/**
+	 * Restituisce il numero di prodotti presenti nella lista attiva
+	 * 
+	 * @return Numero di articoli attivi
+	 */
 	public int numEl() {
 		return articoli.size();
 	}
 	
-	//Numero elementi cancellati
+	/**
+	 * Restituisce il numero di prodotti presenti nella lista dei cancellati
+	 * 
+	 * @return Numero di articoli cancellati
+	 */
 	public int numElCanc() {
 		return articoliCancellati.size();
 	}
 	
 	/**
-	 * Inserisce un articolo nella lista. Se era tra i cancellati, lo riporta tra gli attivi
-	 * * @param a L'oggetto articolo da aggiungere
-	 * @throws ListaDiArticoliException Lanciata se l'articolo è già presente nella lista attiva
+	 * Aggiunge un nuovo articolo alla lista attiva. Se il prodotto era tra i cancellati, lo ripristina
+	 * 
+	 * @param a L'oggetto {@code Articolo} da inserire
+	 * 
+	 * @throws ListaDiArticoliException Viene lanciata se l'articolo è già presente negli attivi
 	 */
 	public void inserisciArticolo(Articolo a) throws ListaDiArticoliException {
 		if(articoli.contains(a))
-			throw new ListaDiArticoliException("Annuncio già presente");
+			throw new ListaDiArticoliException("Articolo già presente");
 		
 		if(articoliCancellati.contains(a)) {
 			articoliCancellati.remove(a);
@@ -95,24 +137,64 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		
 		articoli.add(a);
 	}
-	
-	public void inserisciArticolo(String nome) throws ListaDiArticoliException, ArticoloException, GestioneListeException {
+	/**
+	 * Crea e inserisce un nuovo articolo fornendo solo il nome
+	 * 
+	 * @param nome Nome del nuovo articolo
+	 * 
+	 * @throws ListaDiArticoliException In caso di duplicato
+	 * @throws ArticoloException In caso di parametri non validi
+	 */
+	public void inserisciArticolo(String nome) throws ListaDiArticoliException, ArticoloException{
 		inserisciArticolo(new Articolo(nome));
 	}
-	
-	public void inserisciArticolo(String nome, String categoria) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	/**
+	 * Crea e inserisce un nuovo articolo fornendo solo il nome e la categoria
+	 * 
+	 * @param nome Nome del nuovo articolo
+	 * @param categoria Categoria del nuovo articolo
+	 * 
+	 * @throws ListaDiArticoliException In caso di duplicato
+	 * @throws ArticoloException In caso di parametri non validi
+	 */
+	public void inserisciArticolo(String nome, String categoria) throws ListaDiArticoliException, ArticoloException {
 		inserisciArticolo(new Articolo(nome, categoria));
 	}
-	
-	public void inserisciArticolo(String nome, String categoria, double prezzo) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	/**
+	 * Crea e inserisce un nuovo articolo fornendo nome, categoria e prezzo
+	 * 
+	 * @param nome Nome del nuovo articolo
+	 * @param categoria Categoria del nuovo articolo
+	 * @param prezzo Prezzo del nuovo articolo
+	 * 
+	 * @throws ListaDiArticoliException In caso di duplicato
+	 * @throws ArticoloException In caso di parametri non validi
+	 */
+	public void inserisciArticolo(String nome, String categoria, double prezzo) throws ListaDiArticoliException, ArticoloException {
 		inserisciArticolo(new Articolo(nome, categoria, prezzo));
 	}
-	
-	public void inserisciArticolo(String nome, String categoria, double prezzo, String nota) throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	/**
+	 * Crea e inserisce un nuovo articolo fornendo nome, categoria e prezzo
+	 * 
+	 * @param nome Nome del nuovo articolo
+	 * @param categoria Categoria del nuovo articolo
+	 * @param prezzo Prezzo del nuovo articolo
+	 * @param nota Nota aggiuntiva del nuovo articolo
+	 * 
+	 * @throws ListaDiArticoliException In caso di duplicato
+	 * @throws ArticoloException In caso di parametri non validi
+	 */
+	public void inserisciArticolo(String nome, String categoria, double prezzo, String nota) throws ListaDiArticoliException, ArticoloException{
 		inserisciArticolo(new Articolo(nome, categoria, prezzo, nota));
 	}
 	
-	// Ricerca Articolo: sia nella lista che nei cancellati
+	/**
+	 * Cerca articoli il cui nome inizia con il prefisso indicato, sia tra gli attivi che tra i cancellati
+	 * 
+	 * @param prefisso Stringa da cercare all'inizio del nome
+	 * 
+	 * @return Una lista di articoli che corrispondono al criterio di ricerca
+	 */
 	public List<Articolo> ricercaArticolo(String prefisso){
 		List<Articolo> ris = new ArrayList<Articolo>();
 		
@@ -129,9 +211,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 	}
 	
 	/**
-	 * Rimuove un articolo dalla lista attiva e lo sposta in quella dei cancellati
-	 * * @param a L'articolo da rimuovere
-	 * @throws ListaDiArticoliException Lanciata se l'articolo non è presente nella lista
+	 * Sposta un articolo dalla lista attiva a quella dei cancellati
+	 * 
+	 * @param a L'articolo da rimuovere
+	 * 
+	 * @throws ListaDiArticoliException Viene lanciata se l'articolo non è presente negli attivi
 	 */
 	public void cancellaArticolo(Articolo a) throws ListaDiArticoliException {
 		if(articoli.contains(a)) {
@@ -144,9 +228,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 	}
 	
 	/**
-	 * Recupera un articolo precedentemente rimosso riportandolo nella lista attiva
-	 * * @param a L'articolo da ripristinare
-	 * @throws ListaDiArticoliException Lanciata se l'articolo non si trova tra i cancellati
+	 * Ripristina un articolo dalla lista dei cancellati riportandolo in quella attiva
+	 * 
+	 * @param a L'articolo da recuperare
+	 * 
+	 * @throws ListaDiArticoliException Viene lanciata se l'articolo non è tra i cancellati o se la lista dei cancellati è vuota
 	 */
 	public void recuperaArticolo(Articolo a) throws ListaDiArticoliException{
 		if(articoliCancellati.isEmpty())
@@ -154,19 +240,25 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		
 		if(articoliCancellati.contains(a)) {
 			articoliCancellati.remove(a);
-			this.inserisciArticolo(a); // sono presenti i controlli necessari
+			this.inserisciArticolo(a); 
 		}
 		else {
 			throw new ListaDiArticoliException("Articolo non presente nei cancellati, è impossibile recuperarlo");
 		}
 	}
 	
-	// Svuota Lista Cancellati 
+	/**
+	 * Svuota definitivamente la lista degli articoli cancellati
+	 */
 	public void svuotaCancellati() {
 		articoliCancellati.clear();
 	}
 	
-	// Calcolo prezzo totale
+	/**
+	 * Calcola la somma dei prezzi di tutti i prodotti presenti nella lista attiva
+	 * 
+	 * @return Il prezzo totale degli articoli attivi
+	 */
 	public double calcoloPrezzoTotale(){
 		double prezzoTotale = 0;
 		
@@ -180,11 +272,14 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		return prezzoTotale;
 	}
 	
-	// toString
+	/**
+	 * Fornisce una rappresentazione testuale della lista e dei suoi articoli
+	 * 
+	 * @return Stringa contenente i dettagli della lista
+	 */
 	@Override
 	public String toString() {
 		return "ListaDiArticoli [nome=" + nome + ", articoli=" + articoli + ", articoliCancellati=" + articoliCancellati
 				+ "]";
 	}
-	
 }
