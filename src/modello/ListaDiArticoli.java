@@ -10,6 +10,10 @@ import modello.exception.ArticoloException;
 import modello.exception.GestioneListeException;
 import modello.exception.ListaDiArticoliException;
 
+/**
+ * Gestisce una collezione di articoli organizzata in una lista attiva e una dei cancellati
+ * * @author Il Tuo Nome
+ */
 public class ListaDiArticoli implements Iterable<Articolo>{
 	
 	// VARIABILI
@@ -44,6 +48,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		}	
 	}
 	
+	/**
+	 * Crea una nuova lista articoli inizializzando le strutture dati interne
+	 * * @param nome Il nome identificativo della lista
+	 * @throws ListaDiArticoliException Lanciata se il nome della lista è vuoto o nullo
+	 */
 	// COSTRUTTORE
 	public ListaDiArticoli(String nome) throws ListaDiArticoliException {
 		if (nome == null || nome.trim().isEmpty()) {
@@ -61,18 +70,6 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		return nome;
 	}
 	
-//	// Controllo lista non sia vuota
-//	public void controlloLista() throws ListaDiArticoliException {
-//		if(articoli.isEmpty())
-//			throw new ListaDiArticoliException("La lista è vuota");
-//	}
-//	
-//	// Controllo lista cancellati non sia vuota
-//	public void controlloListaCancellati() throws ListaDiArticoliException {
-//		if(articoliCancellati.isEmpty())
-//			throw new ListaDiArticoliException("La lista dei cancellati è vuota");
-//	}
-	
 	// Numero elementi nella lista
 	public int numEl() {
 		return articoli.size();
@@ -83,7 +80,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		return articoliCancellati.size();
 	}
 	
-	// Inserisci Articolo
+	/**
+	 * Inserisce un articolo nella lista. Se era tra i cancellati, lo riporta tra gli attivi
+	 * * @param a L'oggetto articolo da aggiungere
+	 * @throws ListaDiArticoliException Lanciata se l'articolo è già presente nella lista attiva
+	 */
 	public void inserisciArticolo(Articolo a) throws ListaDiArticoliException {
 		if(articoli.contains(a))
 			throw new ListaDiArticoliException("Annuncio già presente");
@@ -127,7 +128,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		return ris;
 	}
 	
-	// Cancella Articolo
+	/**
+	 * Rimuove un articolo dalla lista attiva e lo sposta in quella dei cancellati
+	 * * @param a L'articolo da rimuovere
+	 * @throws ListaDiArticoliException Lanciata se l'articolo non è presente nella lista
+	 */
 	public void cancellaArticolo(Articolo a) throws ListaDiArticoliException {
 		if(articoli.contains(a)) {
 			articoli.remove(a);
@@ -138,7 +143,11 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 		}
 	}
 	
-	// Recupera Articolo
+	/**
+	 * Recupera un articolo precedentemente rimosso riportandolo nella lista attiva
+	 * * @param a L'articolo da ripristinare
+	 * @throws ListaDiArticoliException Lanciata se l'articolo non si trova tra i cancellati
+	 */
 	public void recuperaArticolo(Articolo a) throws ListaDiArticoliException{
 		if(articoliCancellati.isEmpty())
 			throw new ListaDiArticoliException("La lista dei cancellati è vuota");

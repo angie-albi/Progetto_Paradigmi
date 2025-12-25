@@ -99,18 +99,22 @@ class ArticoloTest {
 	
 	@Test
 	public void testEquals() throws ArticoloException, GestioneListeException {
-		a2 = new Articolo("Latte", "Cibo", 10.00 , "Urgente!"); // stessi dati
-		a3 = new Articolo("Latte", "Casa", 10.00, "Urgente!"); 	// diversa categoria
-		a4 = new Articolo("Latte", "Cibo", 15.00 , "Urgente!"); // diverso prezzo
-		
-		assertTrue(a1.equals(a1));
-		
-		assertTrue(a1.equals(a2));
-		assertTrue(a2.equals(a1));
-		
-		assertFalse(a1.equals(a3));
-		assertFalse(a1.equals(a4));
-		assertFalse(a1.equals(null));
+	    a2 = new Articolo("Latte", "Cibo", 10.00, "Urgente!");
+	    assertTrue(a1.equals(a2));
+	    Articolo aCase = new Articolo("LATTE", "cibo", 10.00, "Urgente!");
+	    assertTrue(a1.equals(aCase));
+	    
+	    a4 = new Articolo("Latte", "Cibo", 15.00, "Altra nota"); 
+	    assertTrue(a1.equals(a4)); 
+	    
+	    a3 = new Articolo("Latte", "Casa", 10.00, "Urgente!");
+	    assertFalse(a1.equals(a3));
+	    
+	    Articolo aDiverso = new Articolo("Pane", "Cibo");
+	    assertFalse(a1.equals(aDiverso));
+	    
+	    assertFalse(a1.equals(null));
+	    assertFalse(a1.equals("Stringa"));
 	}
 	
 	@Test
