@@ -10,11 +10,28 @@ import modello.GestioneListe;
 import modello.ListaDiArticoli;
 import modello.exception.GestioneListeException;
 
+/**
+ * La classe {@code GestioneListeTest} contiene i test unitari per verificare la logica della classe {@code GestioneListe}
+ * <p> Vengono verificati i seguenti aspetti:
+ * <ul>
+ *   <li>Inizializzazione e ripristino del sistema</li>
+ *   <li>Gestione dell'anagrafica delle liste (inserimento, ricerca e cancellazione)</li>
+ *   <li>Gestione delle categorie merceologiche e dei relativi vincoli</li>
+ *   <li>Registrazione e rimozione globale degli articoli nel sistema</li>
+ * </ul>
+ * 
+ * @author Angie Albitres
+ */
 class GestioneListeTest {
 
 	private ListaDiArticoli l1;
 	private Articolo a1;
 
+	/**
+	 * Ripristina lo stato del sistema e prepara gli oggetti di riferimento prima di ogni test
+	 * 
+	 * @throws Exception In caso di errori durante la configurazione
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		GestioneListe.reset();
@@ -22,6 +39,9 @@ class GestioneListeTest {
 		a1 = new Articolo("Latte", "Alimentari", 1.50);
 	}
 
+	/**
+	 * Verifica che l'inserimento di una lista avvenga correttamente e gestisca i duplicati o valori nulli
+	 */
 	@Test
 	void testInserisciLista() {
 		assertDoesNotThrow(() -> {
@@ -37,6 +57,11 @@ class GestioneListeTest {
 		});
 	}
 	
+	/**
+	 * Verifica la ricerca di una lista tramite il nome e la gestione dei casi di lista non trovata
+	 * 
+	 * @throws GestioneListeException Se si verificano errori durante l'inserimento della lista di test
+	 */
 	@Test
 	void testMatchLista() throws GestioneListeException {
 		GestioneListe.inserisciLista(l1);
@@ -55,6 +80,11 @@ class GestioneListeTest {
 		});
 	}
 
+	/**
+	 * Verifica la rimozione definitiva di una lista dal sistema e la gestione degli errori di ricerca
+	 * 
+	 * @throws GestioneListeException Se si verificano errori durante l'inserimento iniziale
+	 */
 	@Test
 	void testCancellaLista() throws GestioneListeException {
 		GestioneListe.inserisciLista(l1);
@@ -79,6 +109,9 @@ class GestioneListeTest {
 		});
 	}
 
+	/**
+	 * Verifica la registrazione di nuove categorie e il blocco dei duplicati o nomi non validi
+	 */
 	@Test
 	void testInserisciCategoria() {
 		assertDoesNotThrow(() -> {
@@ -99,6 +132,11 @@ class GestioneListeTest {
 		});
 	}
 	
+	/**
+	 * Verifica la rimozione delle categorie e l'impossibilità di eliminare la categoria predefinita
+	 * 
+	 * @throws GestioneListeException Se si verificano errori durante la creazione della categoria di test
+	 */
 	@Test
 	void testCancellaCategoria() throws GestioneListeException {
 		GestioneListe.inserisciCategoria("Bricolage");
@@ -123,6 +161,9 @@ class GestioneListeTest {
 		});
 	}
 
+	/**
+	 * Verifica che l'inserimento di un articolo nel registro globale avvenga senza duplicati
+	 */
 	@Test
 	void testInserisciArticolo() {
 		assertDoesNotThrow(() -> {
@@ -134,6 +175,11 @@ class GestioneListeTest {
 		});
 	}
 
+	/**
+	 * Verifica la corretta rimozione di un articolo dal registro globale di sistema
+	 * 
+	 * @throws GestioneListeException Se si verificano errori durante l'inserimento iniziale
+	 */
 	@Test
 	void testCancellaArticolo() throws GestioneListeException {
 		GestioneListe.inserisciArticolo(a1);

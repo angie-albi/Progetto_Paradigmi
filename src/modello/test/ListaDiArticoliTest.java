@@ -10,13 +10,30 @@ import org.junit.jupiter.api.Test;
 import modello.Articolo;
 import modello.ListaDiArticoli;
 import modello.exception.ArticoloException;
-import modello.exception.GestioneListeException;
 import modello.exception.ListaDiArticoliException;
 
+/**
+ * La classe {@code ListaDiArticoliTest} contiene i test unitari per la classe {@code ListaDiArticoli}
+ * <p> Vengono verificati i seguenti aspetti:
+ * <ul>
+ *   <li>Inizializzazione corretta della lista e validazione del nome</li>
+ *   <li>Gestione dell'inserimento (anche tramite overload) e dei duplicati</li>
+ *   <li>Spostamento degli articoli tra lista attiva e cancellati</li>
+ *   <li>Funzionamento dell'iteratore personalizzato e della ricerca globale</li>
+ *   <li>Calcolo del prezzo totale degli articoli attivi</li>
+ * </ul>
+ * 
+ * @author Angie Albitres
+ */
 class ListaDiArticoliTest {
 
 	ListaDiArticoli l1, l2, l3;
 	
+	/**
+	 * Configura l'ambiente di test creando diverse istanze di liste prima di ogni esecuzione
+	 * 
+	 * @throws ListaDiArticoliException In caso di nomi lista non validi
+	 */
 	@BeforeEach
 	void setUp() throws ListaDiArticoliException {
 		l1 = new ListaDiArticoli("Spesa");
@@ -24,6 +41,9 @@ class ListaDiArticoliTest {
 		l3 = new ListaDiArticoli("Lavoro");
 	}
 	
+	/**
+	 * Verifica che il costruttore assegni il nome e sollevi eccezioni per input non validi
+	 */
 	@Test
 	void testCostruttore() {
 		assertEquals("Spesa", l1.getNome());
@@ -38,6 +58,9 @@ class ListaDiArticoliTest {
 		});
 	}
 	
+	/**
+	 * Verifica il corretto inserimento di articoli tramite tutti i metodi sovraccaricati
+	 */
 	@Test
 	void testInserisciArticoli() {
 		assertDoesNotThrow(() -> {
@@ -54,8 +77,14 @@ class ListaDiArticoliTest {
 		});
 	}
 
+	/**
+	 * Verifica la corretta rimozione di un articolo e il suo spostamento nei cancellati
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException Se l'articolo non è presente o è già rimosso
+	 */
 	@Test
-	void testCancellaArticolo() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testCancellaArticolo() throws ArticoloException, ListaDiArticoliException {
 		riempiLista(l1); 
 		Articolo a = l1.ricercaArticolo("Latte").get(0);
 		
@@ -75,8 +104,14 @@ class ListaDiArticoliTest {
 		});
 	}
 	
+	/**
+	 * Verifica il ripristino di un articolo dalla lista dei cancellati
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException Se l'articolo non è presente nei cancellati
+	 */
 	@Test
-	void testRecuperaArticolo() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testRecuperaArticolo() throws ArticoloException, ListaDiArticoliException {
 		riempiLista(l1);
 		Articolo a = l1.ricercaArticolo("Latte").get(0);
 		
@@ -99,8 +134,14 @@ class ListaDiArticoliTest {
 		});
 	}
 	
+	/**
+	 * Verifica la ricerca di articoli per prefisso ignorando la distinzione tra maiuscole e minuscole
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testRicercaArticolo() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testRicercaArticolo() throws ArticoloException, ListaDiArticoliException {
 		riempiLista(l1);
 		
 		List<Articolo> ris = l1.ricercaArticolo("la");
@@ -120,8 +161,14 @@ class ListaDiArticoliTest {
 		assertEquals(0, ris.size());
 	}
 	
+	/**
+	 * Verifica che la ricerca trovi gli articoli anche quando si trovano nella lista dei cancellati
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testRicercaInclusiCancellati() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testRicercaInclusiCancellati() throws ArticoloException, ListaDiArticoliException {
 	    riempiLista(l1);
 	    Articolo a = l1.ricercaArticolo("Latte").get(0);
 	    l1.cancellaArticolo(a); 
@@ -131,8 +178,14 @@ class ListaDiArticoliTest {
 	    assertEquals("Latte", ris.get(0).getNome());
 	}
 	
+	/**
+	 * Verifica che il calcolo del prezzo totale consideri solo gli articoli attualmente attivi
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testCalcoloPrezzoTotale() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testCalcoloPrezzoTotale() throws ArticoloException, ListaDiArticoliException {
 		assertEquals(0.0, l1.calcoloPrezzoTotale(), 0.001);
 		
 		riempiLista(l1);
@@ -142,8 +195,14 @@ class ListaDiArticoliTest {
 		assertEquals(3.50, l1.calcoloPrezzoTotale(), 0.001);
 	}
 	
+	/**
+	 * Verifica la cancellazione definitiva degli articoli dalla lista dei rimossi
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testSvuotaCancellati() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testSvuotaCancellati() throws ArticoloException, ListaDiArticoliException {
 		riempiLista(l1);
 		Articolo a = l1.ricercaArticolo("Latte").get(0);
 		l1.cancellaArticolo(a);
@@ -156,8 +215,14 @@ class ListaDiArticoliTest {
 		});
 	}
 	
+	/**
+	 * Verifica che l'inserimento di un articolo già cancellato lo ripristini automaticamente tra gli attivi
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testInserimentoArticoloGiaCancellato() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testInserimentoArticoloGiaCancellato() throws ArticoloException, ListaDiArticoliException {
 	    riempiLista(l1);
 	    Articolo a = l1.ricercaArticolo("Latte").get(0);
 	    l1.cancellaArticolo(a);
@@ -171,8 +236,14 @@ class ListaDiArticoliTest {
 	    assertEquals(13.50, l1.calcoloPrezzoTotale(), 0.001);
 	}
 	
+	/**
+	 * Verifica che l'iteratore attraversi correttamente sia gli articoli attivi che i cancellati
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testIteratoreContenuto() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testIteratoreContenuto() throws ArticoloException, ListaDiArticoliException {
 	    riempiLista(l1);
 	    Articolo a = l1.ricercaArticolo("Latte").get(0);
 	    l1.cancellaArticolo(a); 
@@ -192,8 +263,14 @@ class ListaDiArticoliTest {
 	    assertTrue(trovatoPane);
 	}
 	
+	/**
+	 * Verifica la correttezza della descrizione testuale generata per la lista
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 * @throws ListaDiArticoliException In caso di errori nella lista
+	 */
 	@Test
-	void testToString() throws ArticoloException, ListaDiArticoliException, GestioneListeException {
+	void testToString() throws ArticoloException, ListaDiArticoliException {
 	    ListaDiArticoli lista = new ListaDiArticoli("Spesa");
 	    Articolo a1 = new Articolo("Latte");
 	    Articolo a2 = new Articolo("Pane");
@@ -210,7 +287,15 @@ class ListaDiArticoliTest {
 	    assertTrue(risultato.contains("Pane"));
 	}
 
-	void riempiLista(ListaDiArticoli l) throws ArticoloException, ListaDiArticoliException, GestioneListeException{
+	/**
+	 * Metodo ausiliario per popolare la lista con articoli predefiniti
+	 * 
+	 * @param l La lista da riempire
+	 * 
+	 * @throws ArticoloException In caso di dati articolo non validi
+	 * @throws ListaDiArticoliException Se si verificano errori nell'inserimento
+	 */
+	void riempiLista(ListaDiArticoli l) throws ArticoloException, ListaDiArticoliException {
 		l.inserisciArticolo("Latte", "Alimentari", 1.50);
 		l.inserisciArticolo("Pane", "Alimentari", 2.00);
 		l.inserisciArticolo("Vino", "Bevande", 10.00);

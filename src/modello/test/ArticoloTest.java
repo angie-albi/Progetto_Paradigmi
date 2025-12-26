@@ -10,19 +10,40 @@ import org.junit.jupiter.api.Test;
 
 import modello.Articolo;
 import modello.exception.ArticoloException;
-import modello.exception.GestioneListeException;
 
+/**
+ * La classe {@code ArticoloTest} contiene i test unitari per verificare la correttezza della classe {@code Articolo}
+ * <p> Vengono testati:
+ * <ul>
+ *   <li>Il corretto funzionamento dei costruttori</li>
+ *   <li>La validazione dei dati (nome e prezzo)</li>
+ *   <li>La modifica dei campi tramite i metodi setters</li>
+ *   <li>La logica di uguaglianza e la rappresentazione testuale</li>
+ * </ul>
+ * 
+ * @author Angie Albitres
+ */
 class ArticoloTest {
 	
 	private Articolo a1, a2, a3, a4;
 
+	/**
+	 * Configura l'ambiente di test inizializzando un articolo di riferimento prima di ogni test
+	 * 
+	 * @throws Exception In caso di errori durante l'inizializzazione
+	 */
 	@BeforeEach
 	void setUp() throws Exception {
 		a1 = new Articolo("Latte", "Cibo", 10.00 , "Urgente!");
 	}
 	
+	/**
+	 * Verifica che i diversi costruttori di {@code Articolo} assegnino correttamente i valori iniziali
+	 * 
+	 * @throws ArticoloException Se i dati inseriti non sono validi 
+	 */
 	@Test
-	void testCostruttore() throws ArticoloException, GestioneListeException {
+	void testCostruttore() throws ArticoloException{ 
 		assertEquals("Latte", a1.getNome());
 		assertEquals("Cibo", a1.getCategoria());
 		assertEquals(10.00 , a1.getPrezzo(), 0.001); 
@@ -47,6 +68,9 @@ class ArticoloTest {
 		assertEquals("", a4.getNota());
 	}
 
+	/**
+	 * Verifica che venga sollevata un'eccezione quando si tenta di creare un articolo con prezzo negativo
+	 */
 	@Test
 	public void testCostruttorePrezzoNegativo() {
 		assertThrows(ArticoloException.class, () -> {
@@ -54,6 +78,9 @@ class ArticoloTest {
 		});
 	}
 	
+	/**
+	 * Verifica che il sistema impedisca la creazione di articoli con nomi vuoti o nulli
+	 */
     @Test
     public void testCostruttoreNomeNonValido() {
         assertThrows(ArticoloException.class, () -> {
@@ -65,8 +92,13 @@ class ArticoloTest {
         });
     }
 
+    /**
+     * Verifica il corretto aggiornamento dei campi e la validazione del prezzo tramite i setters
+	 * 
+	 * @throws ArticoloException Se il prezzo impostato è negativo
+     */
 	@Test
-	public void testSetters() throws ArticoloException, GestioneListeException {
+	public void testSetters() throws ArticoloException {
 		a1.setCategoria("Cibo");
 		assertEquals("Cibo", a1.getCategoria());
 		
@@ -85,8 +117,13 @@ class ArticoloTest {
 		});
 	}
 	
+	/**
+	 * Verifica che i setters gestiscano correttamente i valori nulli o vuoti assegnando i default
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 */
 	@Test
-	public void testSettersValoriDiDefault() throws ArticoloException, GestioneListeException {
+	public void testSettersValoriDiDefault() throws ArticoloException {
 	    a1.setCategoria(null);
 	    assertEquals(Articolo.CATEGORIA_DEFAULT, a1.getCategoria());
 
@@ -97,8 +134,13 @@ class ArticoloTest {
 	    assertEquals("", a1.getNota());
 	}
 	
+	/**
+	 * Verifica la logica di uguaglianza basata esclusivamente su nome e categoria (case-insensitive)
+	 * 
+	 * @throws ArticoloException In caso di errore nella creazione degli articoli di test
+	 */
 	@Test
-	public void testEquals() throws ArticoloException, GestioneListeException {
+	public void testEquals() throws ArticoloException {
 	    a2 = new Articolo("Latte", "Cibo", 10.00, "Urgente!");
 	    assertTrue(a1.equals(a2));
 	    Articolo aCase = new Articolo("LATTE", "cibo", 10.00, "Urgente!");
@@ -116,7 +158,11 @@ class ArticoloTest {
 	    assertFalse(a1.equals(null));
 	    assertFalse(a1.equals("Stringa"));
 	}
-	
+	/**
+	 * Verifica che la descrizione testuale dell'articolo contenga tutti i dati correttamente formattati
+	 * 
+	 * @throws ArticoloException In caso di errore nei dati
+	 */
 	@Test
 	public void testToString() throws ArticoloException {
 		assertEquals("\n Articolo [nome=Latte, categoria=Cibo, prezzo=10.0, nota=Urgente!]", a1.toString());
