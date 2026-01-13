@@ -1,7 +1,10 @@
 package main;
 
+import gui.ListaGui;
 import gui.rigaComando.InterfacciaRigaDiComando;
 import jbook.util.Input;
+import modello.ListaDiArticoli; //da eliminare
+import modello.exception.ListaDiArticoliException;
 
 /**
  * Classe Main principale del programma che avvia le interfaccie disponibili dell'applicazione
@@ -35,7 +38,7 @@ public class Main {
 						interfacciaRigaComando();
 					}
 					
-					
+			
 					default -> System.out.println("\nScelta non valida, riprova");
 				}
 			} catch (NumberFormatException e) {
@@ -59,8 +62,13 @@ public class Main {
 	 * Metodo per avviare l'interfaccia grafica
 	 */
 	private static void interfacciaGrafica() {
-//		new GUI();
-		System.out.println("Chiusura interfaccia grafica..."); // da eliminare
+		
+		//provvisorio, poi si richiamera a GestoreListe
+		try {
+			new ListaGui(new ListaDiArticoli("Spesa"));
+		} catch (ListaDiArticoliException e) {
+			e.printStackTrace();
+		} 				
 	}
 	
 	/**
