@@ -136,7 +136,7 @@ public class ControlloGestore implements ActionListener {
 		}
 		try {
 			ListaDiArticoli lista = GestioneListe.matchLista(selezionata);
-			new ListaGui(lista); 
+			new ListaGui(lista, vistaListe);
 		} catch (GestioneListeException ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
 		}

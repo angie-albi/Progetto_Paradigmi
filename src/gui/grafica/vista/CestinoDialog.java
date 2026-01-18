@@ -11,10 +11,10 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import gui.grafica.controllo.ControlloCestino;
-import gui.grafica.controllo.ControlloLista;
 import modello.Articolo;
 import modello.ListaDiArticoli;
 
+@SuppressWarnings("serial")
 public class CestinoDialog extends JDialog{
 	private DefaultTableModel tableModel;
     private JTable tabella;
@@ -39,6 +39,8 @@ public class CestinoDialog extends JDialog{
         };
         
         tabella = new JTable(tableModel);
+        tabella.setFillsViewportHeight(true);
+        
         add(new JScrollPane(tabella), BorderLayout.CENTER);
         controllo.setVista(this);
 

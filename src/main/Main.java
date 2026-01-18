@@ -1,10 +1,7 @@
 package main;
 
-import gui.ListaGui;
 import gui.rigaComando.InterfacciaRigaDiComando;
 import jbook.util.Input;
-import modello.ListaDiArticoli; //da eliminare
-import modello.exception.ListaDiArticoliException;
 
 /**
  * Classe Main principale del programma che avvia le interfaccie disponibili dell'applicazione
@@ -64,11 +61,7 @@ public class Main {
 	private static void interfacciaGrafica() {
 		
 		//provvisorio, poi si richiamera a GestoreListe
-		try {
-			new ListaGui(new ListaDiArticoli("Spesa"));
-		} catch (ListaDiArticoliException e) {
-			e.printStackTrace();
-		} 				
+						
 	}
 	
 	/**

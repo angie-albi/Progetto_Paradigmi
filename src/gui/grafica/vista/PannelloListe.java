@@ -51,6 +51,8 @@ public class PannelloListe extends JPanel {
 
 		tabellaListe = new JTable(tableModel);
 		tabellaListe.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tabellaListe.setFillsViewportHeight(true);
+		
 		add(new JScrollPane(tabellaListe), BorderLayout.CENTER);
 
 		// pannello Bottoni

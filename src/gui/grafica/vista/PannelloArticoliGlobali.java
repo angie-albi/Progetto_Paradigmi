@@ -18,6 +18,7 @@ import modello.GestioneListe;
 /**
  * Vista che mostra il registro globale di tutti gli articoli presenti nel sistema.
  */
+@SuppressWarnings("serial")
 public class PannelloArticoliGlobali extends JPanel{
 	private JTable tabellaArticoli;
     private DefaultTableModel tableModel;
@@ -38,6 +39,8 @@ public class PannelloArticoliGlobali extends JPanel{
 
         tabellaArticoli = new JTable(tableModel);
         tabellaArticoli.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabellaArticoli.setFillsViewportHeight(true);
+        
         add(new JScrollPane(tabellaArticoli), BorderLayout.CENTER);
 
         // Pannello operazioni globali

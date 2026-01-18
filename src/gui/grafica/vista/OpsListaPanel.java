@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 
 import gui.grafica.controllo.ControlloLista;
 
+@SuppressWarnings("serial")
 public class OpsListaPanel extends JPanel{
 
 	public OpsListaPanel(ControlloLista controllo) {

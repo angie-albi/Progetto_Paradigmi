@@ -1,7 +1,6 @@
 package gui.grafica.vista;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -16,6 +15,7 @@ import modello.GestioneListe;
 /**
  * Vista per la gestione delle categorie globali.
  */
+@SuppressWarnings("serial")
 public class PannelloCategorie extends JPanel {
 	private JList<String> listaCategorie;
     private DefaultListModel<String> listModel;

@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import gui.grafica.vista.CestinoDialog;
 import gui.grafica.vista.ContentListaPanel;
 import gui.grafica.vista.DialogoArticolo;
+import gui.grafica.vista.PannelloListe;
 import modello.Articolo;
 import modello.ListaDiArticoli;
 import modello.exception.ArticoloException;
@@ -17,10 +18,12 @@ import modello.exception.ListaDiArticoliException;
 public class ControlloLista implements ActionListener {
 	private ContentListaPanel contenutoLista;
 	private ListaDiArticoli model;
+	private PannelloListe vistaPrincipale;
 
-	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model) {
+	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model, PannelloListe vistaPrincipale) {
 		this.contenutoLista = contenutoLista;
 		this.model = model;
+		this.vistaPrincipale = vistaPrincipale;
 	}
 
 	@Override
@@ -35,6 +38,7 @@ public class ControlloLista implements ActionListener {
 	    }
 
 		contenutoLista.updateView();
+		vistaPrincipale.aggiornaDati();
 	}
 
 	private void gestisciAggiungi() {
@@ -90,7 +94,7 @@ public class ControlloLista implements ActionListener {
 	}
 
 	private void gestisciVisualizzaCestino() {
-		ControlloCestino controllerCestino = new ControlloCestino(model, contenutoLista);
+		ControlloCestino controllerCestino = new ControlloCestino(model, contenutoLista, vistaPrincipale);
 		new CestinoDialog(null, model, controllerCestino);
 
 		contenutoLista.updateView();
