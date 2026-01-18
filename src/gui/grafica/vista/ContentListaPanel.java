@@ -71,14 +71,17 @@ public class ContentListaPanel extends JPanel {
     public void updateView() {
         tableModel.setRowCount(0);
 
+        java.util.List<Articolo> cancellati = model.getArticoliCancellati();
         for (Articolo a : model) {
-            Object[] riga = {
-                a.getNome(),
-                a.getCategoria(),
-                String.format("%.2f", a.getPrezzo()),
-                a.getNota()
-            };
-            tableModel.addRow(riga);
+            if (!cancellati.contains(a)) {
+                Object[] riga = {
+                    a.getNome(),
+                    a.getCategoria(),
+                    String.format("%.2f", a.getPrezzo()),
+                    a.getNota()
+                };
+                tableModel.addRow(riga);
+            }
         }
         
         double totale = model.calcoloPrezzoTotale();
