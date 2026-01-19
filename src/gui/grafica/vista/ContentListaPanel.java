@@ -2,6 +2,8 @@ package gui.grafica.vista;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -9,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable; 
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import modello.ListaDiArticoli;
@@ -38,20 +41,27 @@ public class ContentListaPanel extends JPanel {
 		add(headerPanel, BorderLayout.NORTH);
 		
 		// TABELLA
-		// colonne della tabella 
 		String[] colonne = {"Nome", "Categoria", "Prezzo (€)", "Nota"};
 		
-		// creazione modello della tabella
 		tableModel = new DefaultTableModel(colonne, 0) {
-			// tabella non modificabile
+	        @Override
+	        public boolean isCellEditable(int row, int column) { 
+	        	return false; 
+	        }
+	    };
+	    
+	    tabella = new JTable(tableModel) {
             @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; 
+            public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
+                // se l'articolo è nel cestino, impediamo la selezione
+                if (isArticoloNelCestino(rowIndex)) 
+                	return;
+                super.changeSelection(rowIndex, columnIndex, toggle, extend);
             }
         };
-        tabella = new JTable(tableModel);
         
         // configurazione 
+        tabella.setDefaultRenderer(Object.class, new ArticoloRenderer()); // applica il renderer personalizzato per i colori
         tabella.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); 
         tabella.getTableHeader().setReorderingAllowed(false); // impedisce di spostare le colonne
         tabella.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -66,24 +76,16 @@ public class ContentListaPanel extends JPanel {
 	/**
      * Aggiorna la vista svuotando la tabella e riempiendola con i dati aggiornati del modello
      */
-    public void updateView() {
+	public void updateView() {
         tableModel.setRowCount(0);
-
-        java.util.List<Articolo> cancellati = model.getArticoliCancellati();
+        List<Articolo> cancellati = model.getArticoliCancellati();
+        
         for (Articolo a : model) {
             if (!cancellati.contains(a)) {
-                Object[] riga = {
-                    a.getNome(),
-                    a.getCategoria(),
-                    String.format("%.2f", a.getPrezzo()),
-                    a.getNota()
-                };
-                tableModel.addRow(riga);
+                aggiungiRiga(a);
             }
         }
-        
-        double totale = model.calcoloPrezzoTotale();
-        labelCostoTotale.setText("Totale: € " + String.format("%.2f", totale) + "  ");
+        aggiornaTotale();
     }
 	
     /**
@@ -91,27 +93,69 @@ public class ContentListaPanel extends JPanel {
      * 
      * @return L'oggetto Articolo selezionato, oppure null se nulla è selezionato.
      */
-    public Articolo getArticoloSelezionato() {
-        int rigaSelezionata = tabella.getSelectedRow();
+	public Articolo getArticoloSelezionato() {
+        int riga = tabella.getSelectedRow();
+        if (riga == -1) return null; 
 
-        if (rigaSelezionata == -1)
-            return null; 
+        String nome = (String) tableModel.getValueAt(riga, 0);
+        String categoria = (String) tableModel.getValueAt(riga, 1);
 
-        String nome = (String) tableModel.getValueAt(rigaSelezionata, 0);
-        String categoria = (String) tableModel.getValueAt(rigaSelezionata, 1);
-
-        try {
-            Articolo articoloCerc = new Articolo(nome, categoria);
-
-            for (Articolo a : model) {
-                if (a.equals(articoloCerc)) {
-                    return a;
-                }
+        for (Articolo a : model) {
+            if (a.getNome().equalsIgnoreCase(nome) && a.getCategoria().equalsIgnoreCase(categoria)) {
+                return a;
             }
-        } catch (Exception e) {
-            //non genera eccezioni
         }
-
         return null;
+    }
+    
+    private class ArticoloRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (isArticoloNelCestino(row)) {
+                c.setBackground(new Color(200, 200, 200)); // grigio
+            } else {
+                c.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+                c.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+            }
+            return c;
+        }
+    }
+        
+    public void mostraRisultatiRicerca(List<Articolo> risultati) {
+        tableModel.setRowCount(0);
+        for (Articolo a : risultati) {
+            aggiungiRiga(a);
+        }
+    }
+    
+    private boolean isArticoloNelCestino(int row) {
+        if (row < 0) return false;
+        String nome = (String) tableModel.getValueAt(row, 0);
+        String cat = (String) tableModel.getValueAt(row, 1);
+        
+        for (Articolo a : model.getArticoliCancellati()) {
+            if (a.getNome().equalsIgnoreCase(nome) && a.getCategoria().equalsIgnoreCase(cat)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void aggiungiRiga(Articolo a) {
+        tableModel.addRow(new Object[]{
+            a.getNome(), 
+            a.getCategoria(), 
+            String.format("%.2f", a.getPrezzo()), 
+            a.getNota()
+        });
+    }
+    
+    private void aggiornaTotale() {
+        double totale = model.calcoloPrezzoTotale();
+        labelCostoTotale.setText("Totale: € " + String.format("%.2f", totale) + "  ");
     }
 }

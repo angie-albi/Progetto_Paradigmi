@@ -18,6 +18,7 @@ public class ListaPanel extends JPanel{
 	    ContentListaPanel contenutoLista = new ContentListaPanel(model);
 	    ControlloLista controllo = new ControlloLista(contenutoLista, model, vistaPrincipale, controllerGlobale);	    
 	    OpsListaPanel operazioniLista = new OpsListaPanel(controllo);
+	    controllo.setVistaOperazioni(operazioniLista);
 	    
 	    add(contenutoLista, BorderLayout.CENTER);
 	    add(operazioniLista, BorderLayout.NORTH);

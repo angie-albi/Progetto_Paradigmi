@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 import gui.grafica.vista.CestinoDialog;
 import gui.grafica.vista.ContentListaPanel;
 import gui.grafica.vista.DialogoArticolo;
+import gui.grafica.vista.OpsListaPanel;
 import gui.grafica.vista.PannelloListe;
 import modello.Articolo;
 import modello.GestioneListe;
@@ -21,6 +23,7 @@ public class ControlloLista implements ActionListener {
 	private ListaDiArticoli model;
 	private PannelloListe vistaPrincipale;
 	private ControlloGestore controllerGlobale;
+	private OpsListaPanel vistaOperazioni;
 
 	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model, 
             PannelloListe vistaPrincipale, ControlloGestore controllerGlobale) {
@@ -29,19 +32,37 @@ public class ControlloLista implements ActionListener {
 		this.vistaPrincipale = vistaPrincipale;
 		this.controllerGlobale = controllerGlobale; 
 	}
+	
+	public void setVistaOperazioni(OpsListaPanel vistaOperazioni) {
+        this.vistaOperazioni = vistaOperazioni;
+    }
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		String comando = ((JButton) e.getSource()).getText();
+		String comando = "";
 
+		// se la fonte è un bottone, leggiamo il testo (es. "Aggiungi")
+        if (e.getSource() instanceof JButton) {
+            comando = ((JButton) e.getSource()).getText();
+        } else
+        // se la fonte è il JTextField (pressione di INVIO)
+        if (e.getSource() instanceof JTextField) {
+            comando = "Cerca";
+        }
+		
 	    switch (comando) {
 	        case "Aggiungi" -> gestisciAggiungi();
 	        case "Rimuovi" -> gestisciRimuovi();
 	        case "Aggiungi dal catalogo" -> gestisciAggiungiEsistente();
 	        case "Visualizza Cestino" -> gestisciVisualizzaCestino();
+	        case "Cerca" -> gestisciRicerca();
+	        case "Reset" -> gestisciReset();
 	    }
 
-	    contenutoLista.updateView();
+	    if (!comando.equals("Cerca") && !comando.equals("Reset")) {
+            contenutoLista.updateView();
+        }
+        
         if (controllerGlobale != null) {
             controllerGlobale.aggiornaTutto();
         }
@@ -133,4 +154,26 @@ public class ControlloLista implements ActionListener {
 
 		contenutoLista.updateView();
 	}
+	
+	private void gestisciRicerca() {
+        if (vistaOperazioni == null) return;
+        
+        String prefisso = vistaOperazioni.getTestoRicerca();
+        
+        if (prefisso == null || prefisso.isBlank()) {
+            gestisciReset(); // Se premo invio su campo vuoto, resetta
+        } else {
+            java.util.List<Articolo> risultati = model.ricercaArticolo(prefisso);
+            contenutoLista.mostraRisultatiRicerca(risultati);
+            vistaOperazioni.mostraReset(true); // Mostra il tasto Reset
+        }
+    }
+	
+	private void gestisciReset() {
+        if (vistaOperazioni == null) return;
+        
+        vistaOperazioni.pulisciCampo();   // Svuota il JTextField
+        vistaOperazioni.mostraReset(false); // Nasconde il tasto Reset
+        contenutoLista.updateView();      // Torna alla lista normale (solo attivi)
+    }
 }
