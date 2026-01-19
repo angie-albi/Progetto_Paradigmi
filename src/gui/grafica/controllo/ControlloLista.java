@@ -2,6 +2,7 @@ package gui.grafica.controllo;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -19,11 +20,14 @@ public class ControlloLista implements ActionListener {
 	private ContentListaPanel contenutoLista;
 	private ListaDiArticoli model;
 	private PannelloListe vistaPrincipale;
+	private ControlloGestore controllerGlobale;
 
-	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model, PannelloListe vistaPrincipale) {
+	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model, 
+            PannelloListe vistaPrincipale, ControlloGestore controllerGlobale) {
 		this.contenutoLista = contenutoLista;
 		this.model = model;
 		this.vistaPrincipale = vistaPrincipale;
+		this.controllerGlobale = controllerGlobale; 
 	}
 
 	@Override
@@ -37,7 +41,10 @@ public class ControlloLista implements ActionListener {
 	        case "Visualizza Cestino" -> gestisciVisualizzaCestino();
 	    }
 
-		contenutoLista.updateView();
+	    contenutoLista.updateView();
+        if (controllerGlobale != null) {
+            controllerGlobale.aggiornaTutto();
+        }
 		vistaPrincipale.aggiornaDati();
 	}
 
@@ -66,28 +73,22 @@ public class ControlloLista implements ActionListener {
 	    }	
 	}
 
-	private void aggiornaInterfacciaGlobale() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	private void gestisciRimuovi() {
 		Articolo articoloSel = contenutoLista.getArticoloSelezionato();
 
 		if (articoloSel == null) {
-			JOptionPane.showMessageDialog(null, "Seleziona un articolo dalla lista per rimuoverlo",
-					"Nessuna selezione", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Seleziona un articolo dalla lista per rimuoverlo", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
 		int conferma = JOptionPane.showConfirmDialog(null,
 				"Sei sicuro di voler rimuovere l'articolo " + articoloSel.getNome()
 						+ " dalla lista? (verra spostato el cestino)",
-				"Conferma rimozione articolo", JOptionPane.YES_NO_OPTION);
+				"Conferma rimozione", JOptionPane.YES_NO_OPTION);
 		if (conferma == JOptionPane.YES_OPTION) {
 			try {
 				model.cancellaArticolo(articoloSel);
-				JOptionPane.showMessageDialog(null, "Articolo rimosso");
 			} catch (ListaDiArticoliException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
 			}
@@ -96,7 +97,34 @@ public class ControlloLista implements ActionListener {
 	}
 
 	private void gestisciAggiungiEsistente() {
+	    List<Articolo> catalogo = GestioneListe.getArticoli();
+	    if (catalogo.isEmpty()) {
+	        JOptionPane.showMessageDialog(null, "Il catalogo globale è vuoto!");
+	        return;
+	    }
 
+	    String[] opzioni = new String[catalogo.size()];
+	    for (int i = 0; i < catalogo.size(); i++) {
+	        Articolo a = catalogo.get(i);
+	        opzioni[i] = a.getNome() + " [" + a.getCategoria() + "]";
+	    }
+
+	    String scelta = (String) JOptionPane.showInputDialog(null, 
+	            "Seleziona un articolo dal catalogo:", "Aggiungi articolo dal catalogo",
+	            JOptionPane.QUESTION_MESSAGE, null, opzioni, opzioni[0]);
+
+	    if (scelta != null) {
+	        for (int i = 0; i < opzioni.length; i++) {
+	            if (opzioni[i].equals(scelta)) {
+	                try {
+	                    model.inserisciArticolo(catalogo.get(i));
+	                    break;
+	                } catch (Exception ex) {
+	                    JOptionPane.showMessageDialog(null, ex.getMessage());
+	                }
+	            }
+	        }
+	    }
 	}
 
 	private void gestisciVisualizzaCestino() {

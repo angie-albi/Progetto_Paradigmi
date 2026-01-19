@@ -54,6 +54,10 @@ public class PannelloArticoliGlobali extends JPanel{
         btnElimina.addActionListener(controllo);
         bottoni.add(btnElimina);
         
+        JButton btnModifica = new JButton("Modifica Articolo");
+        btnModifica.addActionListener(controllo);
+        bottoni.add(btnModifica);
+        
         add(bottoni, BorderLayout.NORTH);
 
         aggiornaDati();

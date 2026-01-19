@@ -274,6 +274,16 @@ public class ListaDiArticoli implements Iterable<Articolo>{
 	}
 	
 	/**
+	 * Rimuove definitivamente un articolo da entrambe le liste (attivi e cancellati)
+	 * 
+	 * @param a L'articolo da rimuovere definitivamente da entrambe le liste
+	 */
+	public void rimuoviCompletamente(Articolo a) {
+	    this.articoli.remove(a);
+	    this.articoliCancellati.remove(a);
+	}
+	
+	/**
 	 * Fornisce una rappresentazione testuale della lista e dei suoi articoli
 	 * 
 	 * @return Stringa contenente i dettagli della lista

@@ -11,18 +11,40 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
 import gui.grafica.controllo.ControlloGestore;
+import modello.Articolo;
 import modello.GestioneListe;
 import modello.ListaDiArticoli;
 
 /**
- * Vista per la gestione delle categorie globali in formato tabellare.
- * Mostra il numero di articoli associati a ogni categoria tra tutte le liste
+ * La classe {@code PannelloCategorie} rappresenta l'interfaccia utente per la gestione
+ * dell'anagrafica delle categorie merceologiche del sistema.
+ * <p>
+ * Questo pannello visualizza in formato tabellare tutte le categorie registrate nel sistema,
+ * mostrando per ciascuna:
+ * <ul>
+ *   <li>Il nome della categoria</li>
+ *   <li>Il numero totale di articoli attivi appartenenti a quella categoria in tutte le liste</li>
+ *   <li>Il numero totale di articoli di quella categoria presenti nei cestini di tutte le liste</li>
+ * </ul>
+ * 
+ * <p>Fornisce inoltre i comandi per aggiungere nuove categorie o eliminare quelle esistenti,
+ * con il vincolo che la categoria predefinita non può essere rimossa.
+ * 
+ * @author Angie Albitres
  */
 @SuppressWarnings("serial")
 public class PannelloCategorie extends JPanel {
 	private JTable tabellaCategorie;
     private DefaultTableModel tableModel;
 
+    /**
+     * Costruisce il pannello delle categorie inizializzando la tabella e i comandi disponibili.
+     * Configura il layout, crea i pulsanti per l'aggiunta e l'eliminazione di categorie,
+     * e collega il controller per la gestione degli eventi.
+     * 
+     * @param controllo Il controller {@link ControlloGestore} che gestisce la logica delle operazioni
+     *                  sulle categorie
+     */
     public PannelloCategorie(ControlloGestore controllo) {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
@@ -59,39 +81,51 @@ public class PannelloCategorie extends JPanel {
     }
 
     /**
-     * Sincronizza la JTable con i dati presenti nel modello.
-     * Calcola l'utilizzo globale di ogni categoria in tutte le liste
+     * Sincronizza la visualizzazione della tabella con i dati correnti presenti nel sistema.
+     * <p>
+     * Per ogni categoria registrata in {@link GestioneListe}, il metodo:
+     * <ul>
+     *   <li>Scansiona tutte le liste esistenti nel sistema</li>
+     *   <li>Conta gli articoli attivi appartenenti alla categoria</li>
+     *   <li>Conta gli articoli di quella categoria presenti nei cestini</li>
+     *   <li>Aggiorna la riga corrispondente nella tabella con i conteggi ottenuti</li>
+     * </ul>
+     * 
+     * <p>Questo metodo fornisce una vista aggregata dell'utilizzo di ciascuna categoria
+     * attraverso tutte le liste del sistema
      */
     public void aggiornaDati() {
         tableModel.setRowCount(0);
         
         for (String cat : GestioneListe.getCategorie()) {
-            int contaAttivi = 0;
-            int contaCestino = 0;
+            int contaGlobali = 0;
             
-            // per ogni categoria, scansioniamo tutte le liste esistenti
+            
+            for (Articolo a : GestioneListe.getArticoli()) {
+                if (a.getCategoria().equalsIgnoreCase(cat)) {
+                    contaGlobali++;
+                }
+            }
+            
+            int contaCestino = 0;
             for (ListaDiArticoli lista : GestioneListe.getListeArticoli()) {
-                java.util.List<modello.Articolo> cancellati = lista.getArticoliCancellati();
-                
-                
-                for (modello.Articolo a : lista) {
+                for (Articolo a : lista.getArticoliCancellati()) {
                     if (a.getCategoria().equalsIgnoreCase(cat)) {
-                        if (cancellati.contains(a)) {
-                            contaCestino++;
-                        } else {
-                            contaAttivi++;
-                        }
+                        contaCestino++;
                     }
                 }
             }
             
-            Object[] riga = { cat, contaAttivi, contaCestino };
+            Object[] riga = { cat, contaGlobali, contaCestino };
             tableModel.addRow(riga);
         }
     }
 
     /**
-     * Restituisce il nome della categoria selezionata nella tabella
+     * Recupera il nome della categoria attualmente selezionata dall'utente nella tabella.
+     * 
+     * @return Il nome della categoria selezionata come {@code String},
+     * oppure {@code null} se non è presente alcuna selezione
      */
     public String getCategoriaSelezionata() {
         int riga = tabellaCategorie.getSelectedRow();

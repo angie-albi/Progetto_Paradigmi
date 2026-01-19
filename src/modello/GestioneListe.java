@@ -156,16 +156,22 @@ public class GestioneListe {
 	 * @throws GestioneListeException Viene lanciata se la categoria è quella di default o se non esiste
 	 */
 	public static void cancellaCategoria(String nome) throws GestioneListeException {
-		if(nome== null ||nome.isBlank()) 
-			throw new GestioneListeException("Il nome della categoria non può essere vuoto");
-		
-		if(!categorie.contains(nome)) 
-			throw new GestioneListeException("Categoria non trovata");
-		
-		if(nome.equals(CATEGORIA_DEFAULT))
-			throw new GestioneListeException("Non è possibile cancellare la categoria di default");
-		
-		categorie.remove(nome);
+		if(nome == null || nome.isBlank()) 
+	        throw new GestioneListeException("Il nome della categoria non può essere vuoto");
+	    
+	    if(!categorie.contains(nome)) 
+	        throw new GestioneListeException("Categoria non trovata");
+	    
+	    if(nome.equals(CATEGORIA_DEFAULT))
+	        throw new GestioneListeException("Non è possibile cancellare la categoria di default");
+	    
+	    categorie.remove(nome);
+
+	    for (Articolo a : articoli) {
+	        if (a.getCategoria().equalsIgnoreCase(nome)) {
+	            a.setCategoria(CATEGORIA_DEFAULT);
+	        }
+	    }
 	}
 	
 	/**
@@ -201,17 +207,20 @@ public class GestioneListe {
 	}
 	
 	/**
-	 * Rimuove un articolo dal registro globale del sistema
+	 * Rimuove un articolo dal registro globale del sistema e da tutte le liste in cui è presente.
 	 * 
-	 * @param a L'articolo da eliminare
+	 * @param a L'articolo da eliminare dal sistema
 	 * 
-	 * @throws GestioneListeException Viene lanciata se l'articolo non è presente nel registro
+	 * @throws GestioneListeException Viene lanciata se l'articolo non è presente nel registro globale
 	 */
 	public static void cancellaArticolo(Articolo a) throws GestioneListeException {
-		if(!articoli.contains(a))
-			throw new GestioneListeException("Articolo non trovato");
-		
-		articoli.remove(a);
+	    if(!articoli.contains(a)) throw new GestioneListeException("Articolo non trovato");
+	    
+	    articoli.remove(a);
+	    
+	    for (ListaDiArticoli lista : listeArticoli) {
+	        lista.rimuoviCompletamente(a);
+	    }
 	}
 	
 	/**

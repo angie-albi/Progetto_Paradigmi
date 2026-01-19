@@ -78,7 +78,8 @@ public class ControlloGestore implements ActionListener {
             
             case "Aggiungi Articolo" -> gestisciAggiungiArticoloGlobale();
             case "Elimina Articolo" -> gestisciEliminaArticoloGlobale();
-        
+            case "Modifica Articolo" -> gestisciModificaArticoloGlobale();
+            
             case "Nuova Lista" -> gestisciNuovaLista();
 			case "Elimina Lista" -> gestisciEliminaLista();
 			case "Apri Selezionata" -> gestisciApriLista();
@@ -109,7 +110,7 @@ public class ControlloGestore implements ActionListener {
 	private void gestisciEliminaLista() {
 		String selezionata = vistaListe.getListaSelezionata();
 		if (selezionata == null) {
-			JOptionPane.showMessageDialog(null, "Seleziona una lista da eliminare");
+			JOptionPane.showMessageDialog(null, "Seleziona una lista da eliminare", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 
@@ -131,12 +132,12 @@ public class ControlloGestore implements ActionListener {
 	private void gestisciApriLista() {
 		String selezionata = vistaListe.getListaSelezionata();
 		if (selezionata == null) {
-			JOptionPane.showMessageDialog(null, "Seleziona una lista da aprire");
+			JOptionPane.showMessageDialog(null, "Seleziona una lista da aprire", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		try {
 			ListaDiArticoli lista = GestioneListe.matchLista(selezionata);
-			new ListaGui(lista, vistaListe);
+			new ListaGui(lista, vistaListe, this);
 		} catch (GestioneListeException ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage());
 		}
@@ -166,16 +167,21 @@ public class ControlloGestore implements ActionListener {
     private void gestisciEliminaCategoria() {
         String selezionata = vistaCategorie.getCategoriaSelezionata();
         if (selezionata == null) {
-            JOptionPane.showMessageDialog(null, "Seleziona una categoria da eliminare");
+            JOptionPane.showMessageDialog(null, "Seleziona una categoria da eliminare", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        try {
-            GestioneListe.cancellaCategoria(selezionata);
-            vistaCategorie.aggiornaDati();
-        } catch (GestioneListeException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
-        }
+        int conferma = JOptionPane.showConfirmDialog(null,
+				"Sei sicuro di voler rimuovere la categoria " + selezionata + "?",
+				"Conferma rimozione", JOptionPane.YES_NO_OPTION);
+		if (conferma == JOptionPane.YES_OPTION) {
+	        try {
+	            GestioneListe.cancellaCategoria(selezionata);
+	            vistaCategorie.aggiornaDati();
+	        } catch (GestioneListeException ex) {
+	            JOptionPane.showMessageDialog(null, ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+	        }
+		}
     }
     
     // ARTICOLI
@@ -197,6 +203,7 @@ public class ControlloGestore implements ActionListener {
                 GestioneListe.inserisciArticolo(nuovo);
                 
                 vistaArticoli.aggiornaDati();
+                this.aggiornaTutto();
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Il prezzo deve essere un numero valido", "Errore Input", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
@@ -212,23 +219,62 @@ public class ControlloGestore implements ActionListener {
     private void gestisciEliminaArticoloGlobale() {
         Articolo sel = vistaArticoli.getArticoloSelezionato();
         if (sel == null) {
-            JOptionPane.showMessageDialog(null, "Seleziona un articolo da rimuovere dal sistema");
+            JOptionPane.showMessageDialog(null, "Seleziona un articolo da rimuovere dal sistema", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(null, 
-            "Eliminare '" + sel.getNome() + "' dal registro globale?\nAttenzione: non verrà rimosso dalle liste esistenti", 
+            "Eliminare '" + sel.getNome() + "' dal registro globale?\nAttenzione: l'articolo verrà rimosso da tutte le liste esistenti (anche dal cestino)", 
             "Conferma eliminazione", JOptionPane.YES_NO_OPTION);
             
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 GestioneListe.cancellaArticolo(sel);
                 vistaArticoli.aggiornaDati();
+                this.aggiornaTutto();
             } catch (GestioneListeException ex) {
                 JOptionPane.showMessageDialog(null, ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
+    
+    private void gestisciModificaArticoloGlobale() {
+    	Articolo sel = vistaArticoli.getArticoloSelezionato();
+        if (sel == null) {
+            JOptionPane.showMessageDialog(null, "Seleziona un articolo da modificare", "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        DialogoArticolo dialogo = new DialogoArticolo();
+        dialogo.setDatiArticolo(sel); 
+
+        String[] inputs = dialogo.getInputs("Modifica Articolo: " + sel.getNome());
+
+        if (inputs != null) {
+            try {
+                String nuovaCat = inputs[1];
+                double nuovoPrezzo = Double.parseDouble(inputs[2]);
+                String nuovaNota = inputs[3];
+
+                sel.setCategoria(nuovaCat);
+                sel.setPrezzo(nuovoPrezzo);
+                sel.setNota(nuovaNota);
+
+                if (!GestioneListe.esisteCategoria(nuovaCat)) {
+                    GestioneListe.inserisciCategoria(nuovaCat);
+                }
+                
+                aggiornaTutto();
+                JOptionPane.showMessageDialog(null, "Articolo modificato con successo");
+                
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Prezzo non valido", "Errore", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage(), "Errore", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
     
     /**
      * Metodo centralizzato per rinfrescare tutte le tabelle del gestore principale.
