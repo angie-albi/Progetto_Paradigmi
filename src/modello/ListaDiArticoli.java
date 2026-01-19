@@ -23,9 +23,14 @@ import modello.exception.ListaDiArticoliException;
  */
 public class ListaDiArticoli implements Iterable<Articolo>{
 	
-	private String nome;
-	private List<Articolo> articoli;
-	private List<Articolo> articoliCancellati;
+	/** Nome identificativo della lista di articoli. */
+    private String nome;
+
+    /** Elenco dei prodotti attualmente attivi e presenti nella lista della spesa. */
+    private List<Articolo> articoli;
+
+    /** Storico dei prodotti rimossi (cestino) che possono essere recuperati. */
+    private List<Articolo> articoliCancellati;
 	
 	/**
 	 * Restituisce un iteratore che attraversa prima gli articoli attivi e poi quelli cancellati

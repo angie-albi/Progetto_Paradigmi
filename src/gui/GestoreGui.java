@@ -53,15 +53,15 @@ public class GestoreGui extends JFrame {
 	                if (risposta == JOptionPane.YES_OPTION) {
 	                    try {
 	                        GestioneListe.salvaSistema("dati_sistema.txt");
-	                        System.exit(0);
+	                        dispose(); // chiuda la finestra, ma non il programma
 	                    } catch (Exception ex) {
 	                        JOptionPane.showMessageDialog(null, "Errore nel salvataggio: " + ex.getMessage());
 	                    }
 	                } else if (risposta == JOptionPane.NO_OPTION) {
-	                    System.exit(0);
+	                	dispose();
 	                }
 	            } else {
-	                System.exit(0);
+	            	dispose();
 	            }
 	        }
 		});

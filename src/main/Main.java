@@ -3,9 +3,7 @@ package main;
 import gui.GestoreGui;
 import gui.rigaComando.InterfacciaRigaDiComando;
 import jbook.util.Input;
-import modello.Articolo;
 import modello.GestioneListe;
-import modello.ListaDiArticoli;
 
 /**
  * Classe Main principale del programma che avvia le interfaccie disponibili dell'applicazione
@@ -21,8 +19,18 @@ public class Main {
 	 * @param args Argomenti da riga di comando
 	 */
 	public static void main(String[] args) {
-		boolean on = true;
+		// caricamento da file
+		String nomeFile = "dati_sistema.txt";
+        try {
+            GestioneListe.caricaSistema(nomeFile);
+            System.out.println("Dati caricati correttamente da " + nomeFile);
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("Nessun salvataggio trovato. Avvio con sistema vuoto.");
+        } catch (Exception e) {
+            System.out.println("Errore nel caricamento automatico: " + e.getMessage());
+        }
 		
+		boolean on = true;
 		while (on) {
 			try {
 				menuInterfacce();
@@ -39,7 +47,6 @@ public class Main {
 						interfacciaRigaComando();
 					}
 					
-			
 					default -> System.out.println("\nScelta non valida, riprova");
 				}
 			} catch (NumberFormatException e) {
@@ -63,63 +70,7 @@ public class Main {
 	 * Metodo per avviare l'interfaccia grafica
 	 */
 	private static void interfacciaGrafica() {
-		caricaDatiEsempio(); 
 	    new GestoreGui();			
-	}
-	
-	private static void caricaDatiEsempio() {
-	    try {
-	        // --- LISTA 1: SPESA SETTIMANALE ---
-	        ListaDiArticoli spesa = new ListaDiArticoli("Spesa Settimanale");
-	        Articolo a1 = new Articolo("Latte", "Alimentari", 1.50, "Intero");
-	        Articolo a2 = new Articolo("Pane", "Alimentari", 2.00);
-	        Articolo a3 = new Articolo("Detersivo", "Pulizia", 5.50);
-
-	        // Registrazione globale e inserimento nella lista
-	        GestioneListe.inserisciArticolo(a1);
-	        GestioneListe.inserisciArticolo(a2);
-	        GestioneListe.inserisciArticolo(a3);
-	        
-	        spesa.inserisciArticolo(a1);
-	        spesa.inserisciArticolo(a2);
-	        spesa.inserisciArticolo(a3);
-	        spesa.cancellaArticolo(a2); // Pane nel cestino
-	        GestioneListe.inserisciLista(spesa);
-
-	        // --- LISTA 2: PROGETTI BRICO ---
-	        ListaDiArticoli brico = new ListaDiArticoli("Lavori in Casa");
-	        Articolo b1 = new Articolo("Martello", "Attrezzi", 12.00);
-	        Articolo b2 = new Articolo("Vernice", "Bricolage", 25.40, "Colore Blu");
-	        Articolo b3 = new Articolo("Viti", "Ferramenta", 4.50, "Pacco da 100");
-
-	        GestioneListe.inserisciArticolo(b1);
-	        GestioneListe.inserisciArticolo(b2);
-	        GestioneListe.inserisciArticolo(b3);
-	        
-	        brico.inserisciArticolo(b1);
-	        brico.inserisciArticolo(b2);
-	        brico.inserisciArticolo(b3);
-	        brico.cancellaArticolo(b3); // Viti nel cestino
-	        GestioneListe.inserisciLista(brico);
-
-	        // --- LISTA 3: UFFICIO E TECNOLOGIA ---
-	        ListaDiArticoli ufficio = new ListaDiArticoli("Materiale Ufficio");
-	        Articolo u1 = new Articolo("Mouse", "Elettronica", 15.00);
-	        Articolo u2 = new Articolo("Tastiera", "Elettronica", 30.00, "Meccanica");
-	        Articolo u3 = new Articolo("Carta", "Cancelleria", 5.00, "A4 500 fogli");
-
-	        GestioneListe.inserisciArticolo(u1);
-	        GestioneListe.inserisciArticolo(u2);
-	        GestioneListe.inserisciArticolo(u3);
-	        
-	        ufficio.inserisciArticolo(u1);
-	        ufficio.inserisciArticolo(u2);
-	        ufficio.inserisciArticolo(u3);
-	        GestioneListe.inserisciLista(ufficio);
-
-	    } catch (Exception e) {
-	        System.err.println("Errore nel caricamento dati esempio: " + e.getMessage());
-	    }
 	}
 	
 	/**
