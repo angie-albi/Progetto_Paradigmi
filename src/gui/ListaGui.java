@@ -26,6 +26,16 @@ import modello.ListaDiArticoli;
 @SuppressWarnings("serial")
 public class ListaGui extends JFrame {
 
+	/**
+	 * Crea una nuova finestra per la gestione di una lista specifica.
+	 * <p>
+	 * Configura il comportamento della finestra (chiusura solo del frame corrente) 
+	 * e inizializza il pannello interno {@link ListaPanel} che contiene tutta la logica operativa.
+	 * 
+	 * @param model Il modello {@link ListaDiArticoli} contenente i dati della lista da mostrare.
+	 * @param vistaPrincipale Riferimento alla vista principale per permettere gli aggiornamenti grafici.
+	 * @param controllerGlobale Il controller globale che coordina le diverse sezioni del sistema.
+	 */
 	public ListaGui(ListaDiArticoli model, PannelloListe vistaPrincipale, ControlloGestore controllerGlobale) {
 
 		setTitle("Lista: " + model.getNome());

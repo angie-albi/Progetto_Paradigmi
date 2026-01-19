@@ -28,8 +28,15 @@ import modello.ListaDiArticoli;
  */
 @SuppressWarnings("serial")
 public class PannelloListe extends JPanel {
-	private JTable tabellaListe;
-	private DefaultTableModel tableModel;
+	/** 
+	 * Componente grafica per la visualizzazione tabellare delle liste di articoli. 
+	 */
+    private JTable tabellaListe;
+
+    /** 
+     * Modello dei dati che gestisce il contenuto e la struttura della tabella delle liste. 
+     */
+    private DefaultTableModel tableModel;
 
 	/**
 	 * Crea un nuovo {@code PannelloListe} inizializzando la tabella e i relativi comandi.

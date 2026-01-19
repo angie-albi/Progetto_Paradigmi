@@ -39,7 +39,10 @@ import modello.GestioneListe;
  */
 @SuppressWarnings("serial")
 public class PannelloArticoliGlobali extends JPanel{
-	private JTable tabellaArticoli;
+	/** Componente grafica per la visualizzazione tabellare degli articoli. */
+    private JTable tabellaArticoli;
+
+    /** Modello dei dati che gestisce il contenuto e la struttura della tabella. */
     private DefaultTableModel tableModel;
 
     /**

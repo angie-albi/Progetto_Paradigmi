@@ -34,7 +34,14 @@ import modello.ListaDiArticoli;
  */
 @SuppressWarnings("serial")
 public class PannelloCategorie extends JPanel {
-	private JTable tabellaCategorie;
+	/** 
+	 * Componente grafica per la visualizzazione tabellare delle categorie. 
+	 */
+    private JTable tabellaCategorie;
+
+    /** 
+     * Modello dei dati che gestisce il contenuto e la struttura delle categorie. 
+     */
     private DefaultTableModel tableModel;
 
     /**

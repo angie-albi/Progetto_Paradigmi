@@ -32,11 +32,17 @@ import modello.exception.ListaDiArticoliException;
  */
 public class ControlloCestino implements ActionListener{
 	
-	private CestinoDialog vistaCestino;
-    private ListaDiArticoli model;
-    private ContentListaPanel vistaPrincipaleContenuto;
-    private PannelloListe vistaPrincipale;
+	/** Finestra di dialogo per la visualizzazione e gestione degli articoli rimossi. */
+    private CestinoDialog vistaCestino;
 
+    /** Modello dei dati della lista di articoli correntemente gestita dal controller. */
+    private ListaDiArticoli model;
+
+    /** Pannello della vista che mostra il contenuto degli articoli attivi della lista. */
+    private ContentListaPanel vistaPrincipaleContenuto;
+
+    /** Riferimento al pannello principale delle liste per coordinare gli aggiornamenti globali. */
+    private PannelloListe vistaPrincipale;
     /**
      * Costruisce un nuovo controller per il cestino collegandolo al modello e alle viste
      * che devono essere aggiornate dopo le operazioni.

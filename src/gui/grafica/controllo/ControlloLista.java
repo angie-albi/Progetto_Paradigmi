@@ -19,33 +19,42 @@ import modello.ListaDiArticoli;
 import modello.exception.ListaDiArticoliException;
 
 /**
- * La classe {@code ControlloLista} gestisce le operazioni eseguibili su una singola lista di articoli
+ * La classe {@code ControlloLista} funge da controller specifico per la gestione 
+ * di una singola istanza di {@link ListaDiArticoli}.
  * <p>
- * Coordina le seguenti funzionalità:
+ * Implementa l'interfaccia {@link ActionListener} per reagire alle interazioni dell'utente 
+ * (pressione di bottoni o invio di testo). Il suo compito principale è:
  * <ul>
- *   <li>Aggiunta e rimozione di articoli</li>
- *   <li>Selezione di articoli dal catalogo globale</li>
- *   <li>Gestione del cestino della lista</li>
- *   <li>Ricerca articoli per prefisso</li>
+ *    <li>Manipolare il modello locale (la lista selezionata).</li>
+ *    <li>Sincronizzare le aggiunte con il catalogo globale {@link GestioneListe}.</li>
+ *    <li>Aggiornare dinamicamente le componenti della vista dopo ogni operazione.</li>
  * </ul>
  * 
  * @author Angie Albitres
- *
  */
 public class ControlloLista implements ActionListener {
+	/** Vista che mostra gli articoli della lista (Tabella o Lista) */
 	private ContentListaPanel contenutoLista;
+	
+	/** Modello dei dati della lista specifica gestita */
 	private ListaDiArticoli model;
+	
+	/** Pannello contenitore principale delle liste per aggiornamenti di alto livello */
 	private PannelloListe vistaPrincipale;
+	
+	/** Riferimento al controller globale per la sincronizzazione tra schede */
 	private ControlloGestore controllerGlobale;
+	
+	/** Pannello dei controlli (Bottoni di ricerca, aggiunta, ecc.) */
 	private OpsListaPanel vistaOperazioni;
 
 	/**
-	 * Costruisce un nuovo controller per la gestione di una lista specifica
+	 * Crea un'istanza di {@code ControlloLista}.
 	 * 
-	 * @param contenutoLista La vista del contenuto della lista
-	 * @param model Il modello della lista da gestire
-	 * @param vistaPrincipale Il pannello principale delle liste
-	 * @param controllerGlobale Il controller globale per gli aggiornamenti
+	 * @param contenutoLista La vista che visualizza i dati del modello.
+	 * @param model Il modello {@link ListaDiArticoli} da manipolare.
+	 * @param vistaPrincipale Il contenitore UI di riferimento.
+	 * @param controllerGlobale Il coordinatore centrale delle funzionalità GUI.
 	 */
 	public ControlloLista(ContentListaPanel contenutoLista, ListaDiArticoli model, 
             PannelloListe vistaPrincipale, ControlloGestore controllerGlobale) {
@@ -56,19 +65,24 @@ public class ControlloLista implements ActionListener {
 	}
 	
 	/**
-	 * Collega la vista dei controlli operativi al controller
+	 * Associa la vista dei controlli operativi al controller.
+	 * Necessario per gestire i campi di ricerca e i pulsanti di reset.
 	 * 
-	 * @param vistaOperazioni Il pannello contenente i controlli operativi
+	 * @param vistaOperazioni Il pannello {@link OpsListaPanel} da collegare.
 	 */
 	public void setVistaOperazioni(OpsListaPanel vistaOperazioni) {
         this.vistaOperazioni = vistaOperazioni;
     }
 
 	/**
-	 * Gestisce gli eventi generati dai componenti dell'interfaccia.
-	 * Smista le richieste ai metodi specifici e aggiorna le viste dopo ogni operazione
+	 * Metodo centrale per la gestione degli eventi.
+	 * Analizza la sorgente dell'evento (Button o TextField) e invoca 
+	 * il metodo di gestione logica corrispondente.
+	 * <p>
+	 * Al termine di ogni operazione di modifica, notifica il sistema 
+	 * che i dati sono cambiati per abilitare il salvataggio in chiusura.
 	 * 
-	 * @param e L'evento di azione generato
+	 * @param e L'evento ActionEvent catturato.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -92,7 +106,7 @@ public class ControlloLista implements ActionListener {
 	        case "Reset" -> gestisciReset();
 	    }
 	    
-	 // setta a true il valore modifica del GestoreListe
+	    // setta a true il valore modifica del GestoreListe
         switch(comando) {
         	case "Aggiungi", "Rimuovi", "Aggiungi dal catalogo" -> GestioneListe.setModificato(true);
         }
@@ -108,8 +122,11 @@ public class ControlloLista implements ActionListener {
 	}
 
 	/**
-	 * Gestisce l'aggiunta di un nuovo articolo tramite dialogo di input.
-	 * L'articolo viene aggiunto alla lista locale e al catalogo globale
+	 * Apre un dialogo per la creazione di un nuovo {@link Articolo}.
+	 * L'articolo viene inserito sia nella lista corrente che nel registro globale.
+	 * <p>
+	 * Gestisce internamente l'eventuale duplicazione nel catalogo globale 
+	 * senza interrompere il flusso dell'utente.
 	 */
 	private void gestisciAggiungi() {
 	    String[] inputs = new DialogoArticolo().getInputs("Aggiungi Articolo");
@@ -138,8 +155,8 @@ public class ControlloLista implements ActionListener {
 
 
 	/**
-	 * Gestisce la rimozione dell'articolo selezionato spostandolo nel cestino.
-	 * Richiede conferma prima di procedere
+	 * Rimuove l'articolo correntemente selezionato dalla vista.
+	 * L'articolo non viene eliminato definitivamente, ma spostato nel cestino della lista.
 	 */
 	private void gestisciRimuovi() {
 		Articolo articoloSel = contenutoLista.getArticoloSelezionato();
@@ -164,7 +181,8 @@ public class ControlloLista implements ActionListener {
 	}
 
 	/**
-	 * Gestisce l'aggiunta alla lista di un articolo selezionato dal catalogo globale
+	 * Permette di selezionare un articolo già esistente nel catalogo globale
+	 * per aggiungerlo alla lista corrente.
 	 */
 	private void gestisciAggiungiEsistente() {
 	    List<Articolo> catalogo = GestioneListe.getArticoli();
@@ -198,7 +216,8 @@ public class ControlloLista implements ActionListener {
 	}
 
 	/**
-	 * Apre la finestra del cestino per visualizzare e gestire gli articoli cancellati
+	 * Inizializza e visualizza il dialogo del cestino per la lista corrente.
+	 * Crea un {@link ControlloCestino} dedicato per gestire il ripristino o l'eliminazione definitiva.
 	 */
 	private void gestisciVisualizzaCestino() {
 		ControlloCestino controllerCestino = new ControlloCestino(model, contenutoLista, vistaPrincipale);
@@ -208,8 +227,8 @@ public class ControlloLista implements ActionListener {
 	}
 	
 	/**
-	 * Gestisce la ricerca di articoli per prefisso del nome.
-	 * Mostra il pulsante Reset se la ricerca produce risultati
+	 * Esegue un filtraggio degli articoli nella vista in base al prefisso inserito.
+	 * Se la ricerca ha successo, abilita l'opzione di Reset nella UI.
 	 */
 	private void gestisciRicerca() {
         if (vistaOperazioni == null) return;
@@ -226,13 +245,14 @@ public class ControlloLista implements ActionListener {
     }
 	
 	/**
-	 * Ripristina la visualizzazione normale della lista dopo una ricerca
+	 * Annulla ogni filtro di ricerca attivo e ripristina la visualizzazione 
+	 * completa degli articoli presenti nella lista.
 	 */
 	private void gestisciReset() {
         if (vistaOperazioni == null) return;
         
-        vistaOperazioni.pulisciCampo();   // svuota il JTextField
+        vistaOperazioni.pulisciCampo();   
         vistaOperazioni.mostraReset(false); // nasconde il tasto Reset
-        contenutoLista.updateView();      // torna alla lista normale (solo attivi)
+        contenutoLista.updateView();      
     }
 }

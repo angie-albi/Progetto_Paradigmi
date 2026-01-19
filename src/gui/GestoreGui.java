@@ -11,30 +11,37 @@ import gui.grafica.vista.PannelloListe;
 import modello.GestioneListe;
 
 /**
- * La classe {@code GestoreGui} rappresenta la finestra principale dell'interfaccia grafica
+ * La classe {@code GestoreGui} rappresenta la finestra principale dell'interfaccia grafica (GUI).
  * <p>
- * Funge da contenitore principale per le diverse sezioni del sistema, organizzate in schede:
+ * Questa classe estende {@link JFrame} e funge da orchestratore principale dell'applicazione.
+ * Si occupa di:
  * <ul>
- *   <li>Gestione delle liste</li>
- *   <li>Registro delle categorie</li>
- *   <li>Registro globale degli articoli</li>
+ *    <li>Inizializzare il frame principale e le sue impostazioni estetiche.</li>
+ *    <li>Configurare il sistema di schede ({@link JTabbedPane}) per la navigazione tra le sezioni.</li>
+ *    <li>Istanziare il controller globale {@link ControlloGestore} e collegarlo alle relative viste.</li>
+ *    <li>Gestire il ciclo di vita dell'applicazione, inclusi il caricamento iniziale e il salvataggio in chiusura.</li>
  * </ul>
- * Implementa l'integrazione tra i pannelli della vista e il relativo controller globale.
- * * @author Angie Albitres
+ * 
+ * @author Angie Albitres
  */
 @SuppressWarnings("serial")
 public class GestoreGui extends JFrame {
 	/**
-	 * Inizializza il frame principale del gestore.
-	 * Configura le impostazioni della finestra, crea il controller globale e
-	 * stabilisce le connessioni tra le viste e il controller per permettere
-	 * la corretta gestione degli eventi
+	 * Costruisce un nuovo frame {@code GestoreGui}.
+	 * <p>
+	 * Il costruttore esegue le seguenti operazioni:
+	 * <ol>
+	 *   <li>Imposta il titolo e le dimensioni della finestra.</li>
+	 *   <li>Configura un {@code WindowListener} per intercettare la chiusura e verificare la presenza di modifiche non salvate.</li>
+	 *   <li>Inizializza il {@link ControlloGestore} (Controller) e i pannelli (Vista), stabilendo il legame tra di essi.</li>
+	 *   <li>Organizza i pannelli all'interno di un componente a schede.</li>
+	 * </ol>
 	 */
 	public GestoreGui() {
 		setTitle("Gestore Liste");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
-		// prima della chiusura programma si avvisa l'utente che non ha eseguito il salvataggio
+		// Listener per la gestione della chiusura
 		addWindowListener(new java.awt.event.WindowAdapter() {
 	        @Override
 	        public void windowClosing(java.awt.event.WindowEvent e) {
@@ -86,11 +93,14 @@ public class GestoreGui extends JFrame {
 	}
 
 	/**
-     * Punto di ingresso dell'applicazione. 
-     * Tenta il caricamento automatico dei dati prima di avviare la GUI.
-     * 
-     * @param args Argomenti da riga di comando
-     */
+	 * Punto di ingresso principale (Entry Point) dell'intera applicazione.
+	 * <p>
+	 * Il metodo tenta di ripristinare lo stato del sistema caricando i dati dal file {@code dati_sistema.txt}.
+	 * In caso di successo, i dati saranno disponibili nelle classi di modello; in caso di assenza del file,
+	 * l'applicazione viene avviata con un database vuoto.
+	 * 
+	 * @param args Argomenti passati da riga di comando (non utilizzati in questa applicazione).
+	 */
 	public static void main(String[] args){
 		String nomeFile = "dati_sistema.txt";
 

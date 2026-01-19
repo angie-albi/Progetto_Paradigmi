@@ -30,8 +30,13 @@ import modello.ListaDiArticoli;
  */
 @SuppressWarnings("serial")
 public class CestinoDialog extends JDialog{
-	private DefaultTableModel tableModel;
+	/** Modello dei dati che definisce la struttura e il contenuto informativo della tabella. */
+    private DefaultTableModel tableModel;
+
+    /** Componente Swing dedicata alla rappresentazione grafica dei dati in formato tabellare. */
     private JTable tabella;
+
+    /** Riferimento al modello di dominio contenente la logica e i dati reali degli articoli. */
     private ListaDiArticoli model;
 
     /**

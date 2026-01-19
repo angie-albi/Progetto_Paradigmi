@@ -32,9 +32,14 @@ import modello.exception.GestioneListeException;
  */
 public class ControlloGestore implements ActionListener {
 
-	private PannelloCategorie vistaCategorie;
-	private PannelloArticoliGlobali vistaArticoli;
-	private PannelloListe vistaListe;
+	/** Pannello dell'interfaccia dedicato alla gestione e visualizzazione delle categorie. */
+    private PannelloCategorie vistaCategorie;
+
+    /** Pannello dell'interfaccia dedicato alla gestione del catalogo globale degli articoli. */
+    private PannelloArticoliGlobali vistaArticoli;
+
+    /** Pannello dell'interfaccia dedicato alla gestione e visualizzazione delle liste. */
+    private PannelloListe vistaListe;
 
 	/**
 	 * Collega la vista delle liste al controller

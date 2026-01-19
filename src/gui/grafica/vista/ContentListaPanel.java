@@ -17,13 +17,38 @@ import javax.swing.table.DefaultTableModel;
 import modello.ListaDiArticoli;
 import modello.Articolo;
 
+/**
+ * La classe {@code ContentListaPanel} è il pannello deputato alla visualizzazione 
+ * tabellare degli articoli contenuti in una specifica lista.
+ * <p>
+ * Oltre alla visualizzazione, il pannello si occupa di:
+ * <ul>
+ *    <li>Calcolare e mostrare il costo totale degli articoli attivi.</li>
+ *    <li>Distinguere graficamente (tramite colori) gli articoli nel cestino.</li>
+ *   <li>Fornire i metodi per recuperare l'articolo selezionato dall'utente.</li>
+ * </ul>
+ * 
+ * @author Angie Albitres
+ */
 @SuppressWarnings("serial")
 public class ContentListaPanel extends JPanel {
+	/** Il modello dei dati contenente la lista degli articoli */
 	private ListaDiArticoli model;
+	
+	/** La tabella Swing per la visualizzazione dei dati */
 	private JTable tabella;
+	
+	/** Il modello della tabella che gestisce righe e colonne */
 	private DefaultTableModel tableModel;
+	
+	/** Etichetta per visualizzare il costo totale aggiornato */
 	private JLabel labelCostoTotale;
 
+	/**
+	 * Inizializza il pannello e configura la struttura della tabella.
+	 * 
+	 * @param model Il modello {@link ListaDiArticoli} da cui attingere i dati.
+	 */
 	public ContentListaPanel(ListaDiArticoli model) {
 		this.model = model;
 		setLayout(new BorderLayout());
@@ -74,7 +99,8 @@ public class ContentListaPanel extends JPanel {
 	}
 
 	/**
-     * Aggiorna la vista svuotando la tabella e riempiendola con i dati aggiornati del modello
+     * Sincronizza la tabella con lo stato attuale del modello.
+     * Svuota la vista e ricarica solo gli articoli che non sono nel cestino.
      */
 	public void updateView() {
         tableModel.setRowCount(0);
@@ -88,10 +114,11 @@ public class ContentListaPanel extends JPanel {
         aggiornaTotale();
     }
 	
-    /**
-     * Recupera l'articolo corrispondente alla riga selezionata nella tabella.
+	/**
+     * Identifica l'oggetto {@link Articolo} corrispondente alla riga 
+     * attualmente selezionata dall'utente.
      * 
-     * @return L'oggetto Articolo selezionato, oppure null se nulla è selezionato.
+     * @return L'articolo selezionato, oppure {@code null} se non ci sono selezioni attive.
      */
 	public Articolo getArticoloSelezionato() {
         int riga = tabella.getSelectedRow();
@@ -108,6 +135,10 @@ public class ContentListaPanel extends JPanel {
         return null;
     }
     
+	/**
+     * Classe interna per la personalizzazione grafica delle celle.
+     * Colora di grigio le righe degli articoli presenti nel cestino.
+     */
     private class ArticoloRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, 
@@ -125,6 +156,11 @@ public class ContentListaPanel extends JPanel {
         }
     }
         
+    /**
+     * Visualizza temporaneamente solo i risultati di una ricerca.
+     * 
+     * @param risultati La lista filtrata di articoli da mostrare.
+     */
     public void mostraRisultatiRicerca(List<Articolo> risultati) {
         tableModel.setRowCount(0);
         for (Articolo a : risultati) {
@@ -132,6 +168,14 @@ public class ContentListaPanel extends JPanel {
         }
     }
     
+    /**
+     * Verifica se l'articolo mostrato a una determinata riga della tabella 
+     * appartiene alla lista dei cancellati del modello.
+     * 
+     * @param row L'indice della riga da controllare.
+     * 
+     * @return {@code true} se l'articolo è nel cestino, {@code false} altrimenti.
+     */
     private boolean isArticoloNelCestino(int row) {
         if (row < 0) return false;
         String nome = (String) tableModel.getValueAt(row, 0);
@@ -145,6 +189,11 @@ public class ContentListaPanel extends JPanel {
         return false;
     }
     
+    /**
+     * Converte un oggetto {@link Articolo} in una riga leggibile dalla tabella.
+     * 
+     * @param a L'articolo da aggiungere.
+     */
     private void aggiungiRiga(Articolo a) {
         tableModel.addRow(new Object[]{
             a.getNome(), 
@@ -154,6 +203,9 @@ public class ContentListaPanel extends JPanel {
         });
     }
     
+    /**
+     * Calcola il valore economico totale degli articoli attivi e aggiorna l'interfaccia.
+     */
     private void aggiornaTotale() {
         double totale = model.calcoloPrezzoTotale();
         labelCostoTotale.setText("Totale: € " + String.format("%.2f", totale) + "  ");
