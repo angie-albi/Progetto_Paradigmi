@@ -1,74 +1,121 @@
-# Gestore Liste di Articoli
+<div align="center">
+  <h1>🛒 Gestore Liste di Articoli</h1>
+  <p>
+    Un'applicazione Java completa per la gestione centralizzata di liste della spesa e inventari con doppia interfaccia (GUI e CLI).
+    <br />
+    <br />
+    <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk" alt="Java Version">
+    <img src="https://img.shields.io/badge/GUI-Swing-red?style=for-the-badge&logo=java" alt="Swing">
+    <img src="https://img.shields.io/badge/Architecture-MVC-blueviolet?style=for-the-badge" alt="MVC Pattern">
+    <img src="https://img.shields.io/badge/Test-JUnit_5-25A162?style=for-the-badge&logo=junit5" alt="JUnit">
+  </p>
+</div>
 
-Progetto realizzato per il corso di **Programmazione ad Oggetti** (A.A. 2025/2026).
+---
 
-L'applicazione permette la gestione centralizzata di diverse liste della spesa o inventari, mantenendo un registro globale dei prodotti e delle categorie merceologiche condiviso tra tutte le liste.
+## 🧐 Di cosa si tratta?
 
-## 🚀 Funzionalità Principali
+Questo progetto permette di gestire molteplici liste di articoli (es. "Spesa Casa", "Ufficio") che condividono un **unico registro globale** di prodotti e categorie. Qualsiasi modifica apportata a un articolo nel catalogo centrale (prezzo, categoria o note) viene aggiornata istantaneamente in tutte le liste in cui l'articolo è presente.
 
-* **Gestione Multi-Lista**: Creazione, eliminazione e apertura di liste indipendenti con nomi univoci.
-* **Registro Globale Articoli**: Catalogo centralizzato. Le modifiche a un articolo nel registro (prezzo, categoria, nota) si riflettono in tutte le liste.
-* **Anagrafica Categorie**: Suddivisione degli articoli in categorie definite dall'utente.
-* **Sistema di Cestino (Soft Delete)**: Gli articoli rimossi finiscono in una lista di "cancellati" specifica, da cui possono essere ripristinati o eliminati definitivamente.
-* **Ricerca Avanzata**: Ricerca per prefisso eseguita simultaneamente tra articoli attivi e nel cestino.
-* **Calcolo Totale**: Calcolo in tempo reale del prezzo totale degli articoli attivi in una lista.
-* **Persistenza Dati**: Salvataggio e caricamento automatico dello stato del sistema su file `dati_sistema.txt`.
+Il software è progettato seguendo il pattern architetturale **MVC (Model-View-Controller)**, garantendo una netta separazione tra la logica del dominio e le interfacce utente sviluppate in Swing e per riga di comando.
 
-## 🏗️ Architettura e Pattern
+---
 
-Il software segue i requisiti accademici e i principi della programmazione a oggetti (OOP):
+## ✨ Funzionalità Principali
 
-* **Pattern MVC (Model-View-Controller)**: Netta separazione tra la logica del dominio (`modello`), l'interfaccia utente (`vista`) e il coordinamento (`controllo`).
-* **Pattern Iterator**: La classe `ListaDiArticoli` implementa `Iterable`, permettendo di scorrere uniformemente articoli attivi e cestino.
-* **Gestione Eccezioni**: Utilizzo di eccezioni personalizzate (`ArticoloException`, `GestioneListeException`, `ListaDiArticoliException`) per garantire la robustezza e la validazione dei dati.
-* **Validazione Dati**: Controllo dei formati tramite Regex e prevenzione di valori non validi (es. prezzi negativi).
+### 📂 Gestione Liste (Modello Globale)
+* **Multi-Lista:** Crea, visualizza ed elimina diverse liste indipendenti identificate da nomi univoci.
+* **Registro Globale:** Gestione centralizzata di articoli e categorie merceologiche condivise tra tutte le liste.
+* **Persistenza:** Salvataggio e caricamento automatico dello stato del sistema su file di testo (`dati_sistema.txt`).
 
-## 🛠️ Tecnologie Utilizzate
+### 👤 Gestione Articoli e Categorie
+* **Sistema di Cestino:** Gli articoli rimossi da una lista vengono spostati in un'area "cancellati" specifica per quella lista, permettendone il ripristino o l'eliminazione definitiva.
+* **Ricerca Avanzata:** Ricerca per prefisso che opera simultaneamente tra articoli attivi e cestino.
+* **Validazione:** Controllo rigoroso sui nomi tramite espressioni regolari e prezzi che devono essere non negativi.
+* **Calcolo Totale:** Calcolo in tempo reale del valore economico complessivo degli articoli attivi in ogni lista.
 
-* **Linguaggio**: Java 17+
-* **Interfaccia Grafica**: Java Swing
-* **Interfaccia Testuale**: Standard I/O (CLI) con menu interattivo
-* **Testing**: JUnit 5
-* **Documentazione**: Javadoc
+---
 
-## 📂 Struttura del Progetto
+## 🏗️ Struttura del Progetto
+
+L'organizzazione dei file segue rigorosamente la suddivisione tra logica (Model), interfaccia (View) e coordinamento (Controller):
 
 ```text
 src/
-├── main/                       # Punto di ingresso (Main.java)
-├── modello/                    # Logica di business e classi del dominio
-│   ├── exception/              # Eccezioni personalizzate
-│   └── test/                   # Suite di test JUnit 5
-├── gui/                        # Interfacce Utente
-│   ├── grafica/                # Vista e Controllo (Swing)
-│   └── rigaComando/            # Interfaccia testuale (CLI)
-└── jbook/util/                 # Utility per l'input da tastiera
+├── main/
+│   └── Main.java                      # Punto di ingresso dell'applicazione
+├── modello/                           # Logica di business
+│   ├── Articolo.java
+│   ├── ListaDiArticoli.java
+│   ├── GestioneListe.java
+│   ├── exception/                     # Eccezioni personalizzate
+│   │   ├── ArticoloException.java
+│   │   ├── ListaDiArticoliException.java
+│   │   └── GestioneListeException.java
+│   └── test/                          # Test unitari JUnit 5
+│       ├── ArticoloTest.java
+│       ├── ListaDiArticoliTest.java
+│       └── GestioneListeTest.java
+├── gui/                               # Interfacce utente e controllori
+│   ├── GestoreGui.java
+│   ├── ListaGui.java
+│   ├── rigaComando/
+│   │   └── InterfacciaRigaDiComando.java
+│   └── grafica/
+│       ├── controllo/                 # Controller per la GUI
+│       │   ├── ControlloGestore.java
+│       │   ├── ControlloLista.java
+│       │   └── ControlloCestino.java
+│       └── vista/                     # Componenti grafiche (View)
+│           ├── PannelloListe.java
+│           ├── PannelloCategorie.java
+│           ├── PannelloArticoliGlobali.java
+│           ├── OpsListaPanel.java
+│           ├── ListaPanel.java
+│           ├── DialogoArticolo.java
+│           ├── ContentListaPanel.java
+│           └── CestinoDialog.java
+└── jbook/
+    └── util/
+        └── Input.java                 # Utility per l'input da tastiera
 ```
 
-## 🖥️ Istruzioni per l'Esecuzione
+---
 
-All'avvio, la classe `Main` permette di scegliere tra due modalità di interazione:
+## 🧪 Testing e Qualità
 
-1.  Assicurati di avere il JDK installato.
-2.  Compila i sorgenti del progetto.
-3.  Esegui la classe `main.Main`.
-4.  Scegli l'interfaccia dal menu:
-    * `1`: Interfaccia Grafica (GUI)
-    * `2`: Interfaccia da Riga di Comando (CLI)
+La stabilità del progetto è garantita da una suite di test unitari sviluppata con **JUnit 5**.
+I test coprono:
 
-### Note sul Salvataggio
-Il sistema verifica la presenza di modifiche non salvate alla chiusura e propone il salvataggio automatico nel file `dati_sistema.txt`.
-
-## 🧪 Test Unitari
-
-Il modello è coperto da test unitari che verificano la logica di business:
-* `ArticoloTest`: Validazione prezzi, nomi e uguaglianza.
-* `ListaDiArticoliTest`: Inserimento, cestino, ricerca e calcolo totale.
-* `GestioneListeTest`: Gestione categorie e registro globale.
-
-## ✍️ Autore
-
-* **Angie Albitres**
+* ✅ **Articolo:** Validazione dei nomi tramite Regex, gestione prezzi negativi e logica di uguaglianza basata su nome e categoria.
+* ✅ **Lista:** Gestione corretta del cestino (inserimento/recupero), ripristino articoli e calcolo del totale.
+* ✅ **Gestore:** Verifica dell'integrità dei registri globali e della corretta associazione tra articoli e categorie condivise.
 
 ---
-*Progetto realizzato per l'esame di Programmazione ad Oggetti.*
+
+## ⚙️ Installazione e Setup
+
+Segui questi passaggi per configurare il progetto in locale:
+
+1. **Clona la repository:**
+   ```bash
+   git clone [https://github.com/angie-albi/progetto_paradigmi.git](https://github.com/angie-albi/progetto_paradigmi.git)
+   ```
+2. **Entra nella cartella:**
+   ```bash
+   cd progetto_paradigmi
+   ```
+3. **Compilazione:**
+   ```bash
+   mkdir -p bin
+   javac -d bin -sourcepath src src/main/Main.java
+   ```
+4. **Esecuzione:**
+   ```bash
+   java -cp bin main.Main
+   ```
+
+---
+
+### 👤 Autore
+Sviluppato da **Angie Albitres**
